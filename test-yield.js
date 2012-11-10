@@ -5,12 +5,14 @@ function move(event) {
 
 function loop() {
     var event;
-    while (event = (yield))
-        if (event.type == 'click')
+    while (event = (yield)) {
+        if (event.type == 'mousedown') {
             while (event = (yield)) {
                 if (event.type == 'mousemove') move(event);
-                if (event.type == 'click') break;
+                if (event.type == 'mouseup') break;
             }
+	}
+    }
 }
 
 // register the listeners:
@@ -20,6 +22,11 @@ $(function() {
         handler.send(event);
     }
 
-    $('#thing').click(send);
-    $(window).mousemove(send);
+    $('#thing').mousedown(send);
+    $(window).mousemove(send).mouseup(send);
+
+    // suppress firefox's annoying dragging behavior:
+    $('#thing').bind('dragstart', function(event) {
+	event.preventDefault();
+    });
 });

@@ -3,17 +3,25 @@ function move(event) {
                      top: event.pageY - 50});
 }
 
-var selected = false;
-function onclick(event) {
-    selected = !selected;
+var dragging = false;
+function onmousedown(event) {
+    dragging = true;
 }
 function onmousemove(event) {
-    if (selected)
+    if (dragging)
         move(event);
+}
+function onmouseup(event) {
+    dragging = false;
 }
 
 // register the listeners:
 $(function() {
-    $('#thing').click(onclick);
-    $(window).mousemove(onmousemove);
+    $('#thing').mousedown(onmousedown);
+    $(window).mousemove(onmousemove).mouseup(onmouseup);
+
+    // suppress firefox's annoying dragging behavior:
+    $('#thing').bind('dragstart', function(event) {
+	event.preventDefault();
+    });
 });
