@@ -17,7 +17,7 @@ function loop() {
 
 // register the listeners:
 $(function() {
-    var handler = loop(); handler.next();
+    var handler = loop(); handler.next(); // starts the coroutine
     function send(event) {
         handler.send(event);
     }
