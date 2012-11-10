@@ -22,6 +22,6 @@ $(function() {
 
     // suppress firefox's annoying dragging behavior:
     $('#thing').bind('dragstart', function(event) {
-	event.preventDefault();
+        event.preventDefault();
     });
 });

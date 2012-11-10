@@ -11,7 +11,7 @@ function loop() {
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
-	}
+        }
     }
 }
 
@@ -27,6 +27,6 @@ $(function() {
 
     // suppress firefox's annoying dragging behavior:
     $('#thing').bind('dragstart', function(event) {
-	event.preventDefault();
+        event.preventDefault();
     });
 });
