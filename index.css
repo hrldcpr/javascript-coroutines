@@ -1,6 +1,22 @@
+html {
+    background: #eee;
+}
+
 body {
     margin: 1em;
+    padding: 1em;
     font-size: 14pt;
+    background: #fff;
+}
+
+p {
+    max-width: 800px;
+}
+
+blockquote {
+    background: #eee;
+    padding: 1em;
+    font-style: italic;
 }
 
 pre {
@@ -17,4 +33,9 @@ pre {
 
 .figure p {
     text-align: center;
+    font-style: italic;
+}
+
+.clear {
+    clear: both;
 }
