@@ -1,39 +1,45 @@
 html {
-    background: #eee;
+    background: #888;
 }
 
 body {
-    margin: 1em;
+    margin: 0.5em;
     padding: 1em;
     font-size: 14pt;
     background: #fff;
+}
+
+.credits {
+    margin: 1em;
+    padding: 1em;
+    float: right;
+    background: #eee;
+    text-align: center;
+    font-style: italic;
 }
 
 p {
     max-width: 800px;
 }
 
-blockquote {
-    background: #eee;
-    padding: 1em;
-    font-style: italic;
-}
-
-pre {
-    background: #ddd;
-    padding: 1em;
+.left {
+    float: left;
 }
 
 .figure {
     float: left;
     padding: 1em;
-    margin: 1em;
-    background: #eee;
 }
 
 .figure p {
     text-align: center;
     font-style: italic;
+}
+
+.figure pre {
+    background: #eee;
+    padding: 1em;
+    margin: 0;
 }
 
 .clear {

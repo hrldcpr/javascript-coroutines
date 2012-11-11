@@ -11,23 +11,28 @@
 
   <body onload="prettyPrint();">
 
+    <div class="credits"><p>Harold Cooper</p><p>November 2012</p></div>
+
     <h1>Javascript Coroutines and Event Handling</h1>
 
     <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.</p>
 
-    <p>Javascript makes heavy use of callbacks, which make Javascript coroutines particularly interesting because they can be used to 'invert' multiple callbacks into a single imperative event loop.</p>
+    <p>Javascript makes extensive use of callbacks, which make Javascript coroutines particularly interesting because they can be used to 'invert' multiple callbacks into a single imperative event loop.</p>
 
     <h2>For Example</h2>
 
     <p>Anyone who has programmed simple low-level UIs has probably written some code to handle dragging, which generally works like:</p>
-    <blockquote>Wait for the user to mousedown on something.<br/>Now if they mousemove it counts as dragging,<br/>until they mouseup.</blockquote>
+
+    <ol>
+      <li>Wait for the user to mousedown on something.</li>
+      <li>Now if they mousemove it counts as dragging, until they mouseup.</li>
+    </ol>
 
     <p>This can be implemented with three callbacks, for <code>mousedown</code>, <code>mousemove</code>, and <code>mouseup</code>, and a shared <code>dragging</code> variable.</p>
 
     <p>Or it can be implemented as a single coroutine event loop, which is always either in the not-dragging state of waiting for a <code>mousedown</code>, or in the dragging state of responding to <code>mousemove</code> and waiting for a <code>mouseup</code>.</p>
 
     <div class="figure">
-      <p>dragging with callbacks and shared state</p>
       <pre class="prettyprint">
 var dragging = false;
 function onmousedown(event) {
@@ -41,10 +46,10 @@ function onmouseup(event) {
     dragging = false;
 }
       </pre>
+      <p>dragging with callbacks and shared state</p>
     </div>
 
     <div class="figure">
-      <p>dragging with a coroutine event loop</p>
       <pre class="prettyprint">
 function loop() {
     var event;
@@ -58,9 +63,19 @@ function loop() {
     }
 }
       </pre>
+      <p>dragging with a coroutine event loop</p>
     </div>
 
-    <p>...</p>
+    <div class="left">
+      <p class="clear">Note that both approaches implement the same state machine.</p>
+    </div>
+
+    <div class="figure">
+      <img src="dragging.svg">
+      <p>the dragging state machine</p>
+    </div>
+
+    <p class="clear">Blah blah blah.</p>
 
   </body>
 </html>
