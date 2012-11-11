@@ -1,0 +1,20 @@
+body {
+    margin: 1em;
+    font-size: 14pt;
+}
+
+pre {
+    background: #ddd;
+    padding: 1em;
+}
+
+.figure {
+    float: left;
+    padding: 1em;
+    margin: 1em;
+    background: #eee;
+}
+
+.figure p {
+    text-align: center;
+}

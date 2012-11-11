@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="normalize.css" />
+
+    <link rel="stylesheet" type="text/css" href="prettify.css" />
+    <script src="prettify.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="index.css" />
+  </head>
+  <body onload="prettyPrint();">
+    <h1>Coroutines for Javascript Events</h1>
+    <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.
+    <div class="figure">
+      <pre class="prettyprint">
+var dragging = false;
+function onmousedown(event) {
+    dragging = true;
+}
+function onmousemove(event) {
+    if (dragging)
+        move(event);
+}
+function onmouseup(event) {
+    dragging = false;
+}
+      </pre>
+      <p>Simple dragging, implemented as three callbacks and one variable.</p>
+    </div>
+    <div class="figure">
+      <pre class="prettyprint">
+function loop() {
+    var event;
+    while (event = (yield)) {
+        if (event.type == 'mousedown') {
+            while (event = (yield)) {
+                if (event.type == 'mousemove') move(event);
+                if (event.type == 'mouseup') break;
+            }
+        }
+    }
+}
+      </pre>
+      <p>Simple dragging, implemented as a coroutine event loop.</p>
+    </div>
+  </body>
+</html>
