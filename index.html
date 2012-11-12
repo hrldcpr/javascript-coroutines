@@ -42,7 +42,7 @@ function onmouseup(event) {
     dragging = false;
 }
       </pre>
-      <p>dragging with callbacks and shared state</p>
+      <p>dragging with callbacks and shared variable</p>
     </div>
 
     <div class="figure left">
@@ -62,20 +62,24 @@ function loop() {
       <p>dragging with a coroutine event loop</p>
     </div>
 
-    <div class="clear"></div>
+    <p class="clear">Note that:</p>
+    <pre class="prettyprint">while (event = (yield)) { ...</pre>
+    <p>is equivalent to:</p>
+    <pre class="prettyprint">while (true) { event = (yield); ...</pre>
+    <p>since <code>event</code> is always an event object, which is always truthy. This just makes for more concise event loop syntax, in my opinion.</p>
 
-    <div class="figure right">
+    <div class="figure left">
       <img src="dragging.svg">
       <p>the dragging state machine</p>
     </div>
 
-    <p>Note that both approaches implement the same state machine.</p>
+    <p>Also note that both approaches implement the same state machine:</p>
     <p>In the callback approach, the state is kept in the <code>dragging</code> variable, with the two states corresponding to <code>dragging==false</code> and <code>dragging==true</code>.</p>
     <p>In the coroutine approach, the state is in terms of which <code>yield</code> the coroutine is currently blocked on, with the not-dragging state corresponding to the outer <code>yield</code> and the dragging state corresponding to the inner <code>yield</code>.</p>
 
-    <h2 class="clear">Working Demo</h2>
+    <h2 class="clear">How It Works</h2>
 
-    <p>You can try out the above code by dragging these blue boxes around, although since only Firefox currently supports Javascript 1.7, the coroutine demo won't work in any other browser:</p>
+    <p>You can try out the above code by dragging these blue boxes around, although the coroutine demo requires Javascript 1.7 so it only works in Firefox:</p>
 
     <div class="figure left">
       <iframe src="test.html" width="400px" height="400px"></iframe>
@@ -83,10 +87,10 @@ function loop() {
     </div>
     <div class="figure left">
       <iframe src="test-yield.html" width="400px" height="400px"></iframe>
-      <p>draggable square using coroutines (<strong>Firefox only</strong>)</p>
+      <p>draggable square using coroutines (Firefox only)</p>
     </div>
 
-    <p class="clear">The meat of the code is the event handling shown above, but here's the rest of the code, which registers the event handlers:</p>
+    <p class="clear">The meat of the code is the event handling shown above, but here's the rest of the code, which uses jQuery to register the event handlers:</p>
 
     <div class="figure left">
       <pre class="prettyprint">
@@ -94,7 +98,7 @@ $('#box').mousedown(onmousedown);
 $(window).mousemove(onmousemove)
     .mouseup(onmouseup);
       </pre>
-      <p>registering the callbacks</p>
+      <p>registration with callbacks</p>
     </div>
 
     <div class="figure left">
@@ -107,10 +111,13 @@ function send(event) {
 $('#box').mousedown(send);
 $(window).mousemove(send).mouseup(send);
       </pre>
-      <p>registering the coroutine event loop</p>
+      <p>registration with a coroutine event loop</p>
     </div>
 
-    <p class="clear"></p>
+    <p class="clear">The coroutine code calls <code>loop()</code>, and stores the resulting coroutine in <code>handler</code>.</p>
+    <p>It then calls <code>handler.next()</code> to 'prime' the coroutine by running it until it blocks on the first <code>yield</code>.</p>
+    <p>Finally we define the <code>send</code> function which simply sends its argument to the coroutine, and is thus the perfect function to register as a callback on all the events we wisht to be sent to the coroutine.</p>
+    <p>So now each event we are listening to is sent to the coroutine, and it resumes at whichever <code>yield</code> it is blocked on, with the sent event being returned as the value of <code>yield</code>.</p>
 
   </body>
 </html>
