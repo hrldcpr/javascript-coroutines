@@ -10,6 +10,10 @@ body {
     max-width: 1200px;
 }
 
+iframe {
+    border-style: none;
+}
+
 .credits {
     margin: 1em;
     padding: 1em;

@@ -86,6 +86,30 @@ function loop() {
       <p>draggable square using coroutines (<strong>Firefox only</strong>)</p>
     </div>
 
+    <p class="clear">The meat of the code is the event handling shown above, but here's the rest of the code, which registers the event handlers:</p>
+
+    <div class="figure left">
+      <pre class="prettyprint">
+$('#box').mousedown(onmousedown);
+$(window).mousemove(onmousemove)
+    .mouseup(onmouseup);
+      </pre>
+      <p>registering the callbacks</p>
+    </div>
+
+    <div class="figure left">
+      <pre class="prettyprint">
+var handler = loop(); handler.next();
+function send(event) {
+    handler.send(event);
+}
+
+$('#box').mousedown(send);
+$(window).mousemove(send).mouseup(send);
+      </pre>
+      <p>registering the coroutine event loop</p>
+    </div>
+
     <p class="clear"></p>
 
   </body>
