@@ -11,8 +11,6 @@
 
   <body onload="prettyPrint();">
 
-    <div class="credits"><p>Harold Cooper</p><p>November 2012</p></div>
-
     <h1>Javascript Coroutines and Event Handling</h1>
 
     <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.</p>
@@ -110,7 +108,7 @@ $(window).mousemove(send).mouseup(send);
     <p>In the callback approach, the state is stored explicitly in the <code>dragging</code> variable, with the two states corresponding to <code>dragging==false</code> and <code>dragging==true</code>.</p>
     <p>In the coroutine approach, the state is stored implicitly, in terms of which <code>yield</code> the coroutine is currently blocked on, with the not-dragging state corresponding to the outer <code>yield</code> and the dragging state corresponding to the inner <code>yield</code>.</p>
 
-    <div class="clear"></div>
+    <div class="clear credits">Harold Cooper, November 2012</div>
 
   </body>
 </html>

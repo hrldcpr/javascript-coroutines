@@ -33,10 +33,6 @@ li {
 }
 
 .credits {
-    margin: 1em;
-    padding: 1em;
-    float: right;
-    background: #eee;
     text-align: center;
     font-style: italic;
 }
