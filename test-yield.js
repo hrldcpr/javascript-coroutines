@@ -1,6 +1,6 @@
 function move(event) {
-    $('#thing').css({left: event.pageX - 50,
-                     top: event.pageY - 50});
+    $('#box').css({left: event.pageX - 50,
+                   top: event.pageY - 50});
 }
 
 function loop() {
@@ -22,11 +22,11 @@ $(function() {
         handler.send(event);
     }
 
-    $('#thing').mousedown(send);
+    $('#box').mousedown(send);
     $(window).mousemove(send).mouseup(send);
 
     // suppress firefox's annoying dragging behavior:
-    $('#thing').bind('dragstart', function(event) {
+    $('#box').bind('dragstart', function(event) {
         event.preventDefault();
     });
 });

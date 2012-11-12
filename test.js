@@ -1,6 +1,6 @@
 function move(event) {
-    $('#thing').css({left: event.pageX - 50,
-                     top: event.pageY - 50});
+    $('#box').css({left: event.pageX - 50,
+                   top: event.pageY - 50});
 }
 
 var dragging = false;
@@ -17,11 +17,11 @@ function onmouseup(event) {
 
 // register the listeners:
 $(function() {
-    $('#thing').mousedown(onmousedown);
+    $('#box').mousedown(onmousedown);
     $(window).mousemove(onmousemove).mouseup(onmouseup);
 
     // suppress firefox's annoying dragging behavior:
-    $('#thing').bind('dragstart', function(event) {
+    $('#box').bind('dragstart', function(event) {
         event.preventDefault();
     });
 });
