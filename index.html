@@ -16,23 +16,19 @@
     <h1>Javascript Coroutines and Event Handling</h1>
 
     <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.</p>
-
     <p>Javascript makes extensive use of callbacks, which make Javascript coroutines particularly interesting because they can be used to 'invert' multiple callbacks into a single imperative event loop.</p>
 
     <h2>For Example</h2>
 
     <p>Anyone who has programmed simple low-level UIs has probably written some code to handle dragging, which generally works like:</p>
-
     <ol>
       <li>Wait for the user to mousedown on something.</li>
       <li>Now if they mousemove it counts as dragging, until they mouseup.</li>
     </ol>
-
     <p>This can be implemented with three callbacks, for <code>mousedown</code>, <code>mousemove</code>, and <code>mouseup</code>, and a shared <code>dragging</code> variable.</p>
-
     <p>Or it can be implemented as a single coroutine event loop, which is always either in the not-dragging state of waiting for a <code>mousedown</code>, or in the dragging state of responding to <code>mousemove</code> and waiting for a <code>mouseup</code>.</p>
 
-    <div class="figure">
+    <div class="figure left">
       <pre class="prettyprint">
 var dragging = false;
 function onmousedown(event) {
@@ -49,7 +45,7 @@ function onmouseup(event) {
       <p>dragging with callbacks and shared state</p>
     </div>
 
-    <div class="figure">
+    <div class="figure left">
       <pre class="prettyprint">
 function loop() {
     var event;
@@ -66,16 +62,31 @@ function loop() {
       <p>dragging with a coroutine event loop</p>
     </div>
 
-    <div class="left">
-      <p class="clear">Note that both approaches implement the same state machine.</p>
-    </div>
+    <div class="clear"></div>
 
-    <div class="figure">
+    <div class="figure right">
       <img src="dragging.svg">
       <p>the dragging state machine</p>
     </div>
 
-    <p class="clear">Blah blah blah.</p>
+    <p>Note that both approaches implement the same state machine.</p>
+    <p>In the callback approach, the state is kept in the <code>dragging</code> variable, with the two states corresponding to <code>dragging==false</code> and <code>dragging==true</code>.</p>
+    <p>In the coroutine approach, the state is in terms of which <code>yield</code> the coroutine is currently blocked on, with the not-dragging state corresponding to the outer <code>yield</code> and the dragging state corresponding to the inner <code>yield</code>.</p>
+
+    <h2 class="clear">Working Demo</h2>
+
+    <p>You can try out the above code by dragging these blue boxes around, although since only Firefox currently supports Javascript 1.7, the coroutine demo won't work in any other browser:</p>
+
+    <div class="figure left">
+      <iframe src="test.html" width="400px" height="400px"></iframe>
+      <p>draggable square using callbacks</p>
+    </div>
+    <div class="figure left">
+      <iframe src="test-yield.html" width="400px" height="400px"></iframe>
+      <p>draggable square using coroutines (<strong>Firefox only</strong>)</p>
+    </div>
+
+    <p class="clear"></p>
 
   </body>
 </html>

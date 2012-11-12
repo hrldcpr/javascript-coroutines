@@ -3,10 +3,11 @@ html {
 }
 
 body {
-    margin: 0.5em;
+    margin: 0.5em auto;
     padding: 1em;
     font-size: 14pt;
     background: #fff;
+    max-width: 1200px;
 }
 
 .credits {
@@ -18,16 +19,15 @@ body {
     font-style: italic;
 }
 
-p {
-    max-width: 800px;
-}
-
 .left {
     float: left;
 }
 
+.right {
+    float: right;
+}
+
 .figure {
-    float: left;
     padding: 1em;
 }
 
