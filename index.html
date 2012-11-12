@@ -24,7 +24,6 @@
     <div class="figure left">
       <p>draggable div using callbacks:</p>
       <p><iframe src="test.html" width="400px" height="400px"></iframe></p>
-      <p>the source:</p>
       <pre class="prettyprint">
 var dragging = false;
 function onmousedown(event) {
@@ -46,9 +45,8 @@ $(window).mousemove(onmousemove)
     </div>
 
     <div class="figure left">
-      <p>draggable div using coroutines (Firefox only):</p>
+      <p>draggable div using a coroutine event loop: (Firefox only)</p>
       <p><iframe src="test-yield.html" width="400px" height="400px"></iframe></p>
-      <p>the source:</p>
       <pre class="prettyprint">
 function loop() {
     var event;
