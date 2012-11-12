@@ -18,17 +18,15 @@
     <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.</p>
     <p>Javascript makes extensive use of callbacks, which make Javascript coroutines particularly interesting because they can be used to 'invert' multiple callbacks into a single imperative event loop.</p>
 
-    <h2>For Example</h2>
+    <h2>For Example: A Draggable Div</h2>
 
-    <p>Anyone who has programmed simple low-level UIs has probably written some code to handle dragging, which generally works like:</p>
-    <ol>
-      <li>Wait for the user to mousedown on something.</li>
-      <li>Now if they mousemove it counts as dragging, until they mouseup.</li>
-    </ol>
-    <p>This can be implemented with three callbacks, for <code>mousedown</code>, <code>mousemove</code>, and <code>mouseup</code>, and a shared <code>dragging</code> variable.</p>
-    <p>Or it can be implemented as a single coroutine event loop, which is always either in the not-dragging state of waiting for a <code>mousedown</code>, or in the dragging state of responding to <code>mousemove</code> and waiting for a <code>mouseup</code>.</p>
+    <p>Below are two implementations of a draggable div, one using standard Javascript callbacks, the other using a coroutine event loop.</p>
+    <p>Comparing the code side-by-side, you can see the structural difference between multiple callbacks and a single event loop.</p>
 
     <div class="figure left">
+      <p>draggable div using callbacks:</p>
+      <p><iframe src="test.html" width="400px" height="400px"></iframe></p>
+      <p>the source:</p>
       <pre class="prettyprint">
 var dragging = false;
 function onmousedown(event) {
@@ -41,83 +39,78 @@ function onmousemove(event) {
 function onmouseup(event) {
     dragging = false;
 }
+
+// register the listeners:
+$('#box').mousedown(onmousedown);
+$(window).mousemove(onmousemove)
+    .mouseup(onmouseup);
       </pre>
-      <p>dragging with callbacks and shared variable</p>
     </div>
 
     <div class="figure left">
+      <p>draggable div using coroutines (Firefox only):</p>
+      <p><iframe src="test-yield.html" width="400px" height="400px"></iframe></p>
+      <p>the source:</p>
       <pre class="prettyprint">
 function loop() {
     var event;
-    while (event = (yield)) { // not dragging
+    while (event = (yield)) {
         if (event.type == 'mousedown') {
-            while (event = (yield)) { // dragging
+            while (event = (yield)) {
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
         }
     }
 }
-      </pre>
-      <p>dragging with a coroutine event loop</p>
-    </div>
 
-    <p class="clear">Note that:</p>
-    <pre class="prettyprint">while (event = (yield)) { ...</pre>
-    <p>is equivalent to:</p>
-    <pre class="prettyprint">while (true) { event = (yield); ...</pre>
-    <p>since <code>event</code> is always an event object, which is always truthy. This just makes for more concise event loop syntax, in my opinion.</p>
-
-    <div class="figure left">
-      <img src="dragging.svg">
-      <p>the dragging state machine</p>
-    </div>
-
-    <p>Also note that both approaches implement the same state machine:</p>
-    <p>In the callback approach, the state is kept in the <code>dragging</code> variable, with the two states corresponding to <code>dragging==false</code> and <code>dragging==true</code>.</p>
-    <p>In the coroutine approach, the state is in terms of which <code>yield</code> the coroutine is currently blocked on, with the not-dragging state corresponding to the outer <code>yield</code> and the dragging state corresponding to the inner <code>yield</code>.</p>
-
-    <h2 class="clear">How It Works</h2>
-
-    <p>You can try out the above code by dragging these blue boxes around, although the coroutine demo requires Javascript 1.7 so it only works in Firefox:</p>
-
-    <div class="figure left">
-      <iframe src="test.html" width="400px" height="400px"></iframe>
-      <p>draggable square using callbacks</p>
-    </div>
-    <div class="figure left">
-      <iframe src="test-yield.html" width="400px" height="400px"></iframe>
-      <p>draggable square using coroutines (Firefox only)</p>
-    </div>
-
-    <p class="clear">The meat of the code is the event handling shown above, but here's the rest of the code, which uses jQuery to register the event handlers:</p>
-
-    <div class="figure left">
-      <pre class="prettyprint">
-$('#box').mousedown(onmousedown);
-$(window).mousemove(onmousemove)
-    .mouseup(onmouseup);
-      </pre>
-      <p>registration with callbacks</p>
-    </div>
-
-    <div class="figure left">
-      <pre class="prettyprint">
+// register the listeners:
 var handler = loop(); handler.next();
 function send(event) {
     handler.send(event);
 }
-
 $('#box').mousedown(send);
 $(window).mousemove(send).mouseup(send);
       </pre>
-      <p>registration with a coroutine event loop</p>
     </div>
 
-    <p class="clear">The coroutine code calls <code>loop()</code>, and stores the resulting coroutine in <code>handler</code>.</p>
-    <p>It then calls <code>handler.next()</code> to 'prime' the coroutine by running it until it blocks on the first <code>yield</code>.</p>
-    <p>Finally we define the <code>send</code> function which simply sends its argument to the coroutine, and is thus the perfect function to register as a callback on all the events we wisht to be sent to the coroutine.</p>
+    <h3 class="clear">Notes</h2>
+    <ul>
+      <li><code>move(event)</code> is defined elsewhere and simply moves the div.</li>
+      <li><p><code class="prettyprint">while (event = (yield)) { ... }</code>
+        is equivalent to:</p>
+        <p><code class="prettyprint">while (true) { event = (yield); ... }</code>
+        since we will never send anything 'falsey' to the coroutine.</p>
+        <p>This just makes for more concise event loop syntax, in my opinion.</p></li>
+    </ul>
+
+    <h2>How It Works</h2>
+
+    <p><code>loop()</code> is always in one of two states, depending on which <code>yield</code> it is blocked on:</p>
+    <ol>
+      <li>At the outer <code>yield</code> it loops through events until it receives a mousedown, at which point it enters the inner loop.</li>
+      <li>Then it moves to the inner <code>yield</code>, where it processes mousemoves until it receives a mouseup, at which point it breaks back to the outer loop.</li>
+    </ol>
+
+    <p>We register event listeners that send events to <code>loop()</code> such that the <code>yield</code> statements returns events as they happen:</p>
+    <ol>
+      <li>We instantiate the coroutine with <code class="prettyprint">var handler = loop();</code></li>
+      <li>We call <code class="prettyprint">handler.next();</code> to 'prime' the coroutine by running it until it blocks on the first <code>yield</code>.</li>
+      <li>We define the <code>send</code> function which simply sends its argument to the coroutine, and is thus the perfect function to register as a callback on all the events we wish to be sent to the coroutine.</li>
+    </ol>
     <p>So now each event we are listening to is sent to the coroutine, and it resumes at whichever <code>yield</code> it is blocked on, with the sent event being returned as the value of <code>yield</code>.</p>
+
+    <h2>Explicit And Implicit State</h2>
+    <div class="figure right">
+      <img src="dragging.svg">
+      <p>the dragging state machine</p>
+    </div>
+
+    <p>Both approaches implement the same state machine, using completely different mechanisms:</p>
+    <p>In the callback approach, the state is stored explicitly in the <code>dragging</code> variable, with the two states corresponding to <code>dragging==false</code> and <code>dragging==true</code>.</p>
+    <p>In the coroutine approach, the state is stored implicitly, in terms of which <code>yield</code> the coroutine is currently blocked on, with the not-dragging state corresponding to the outer <code>yield</code> and the dragging state corresponding to the inner <code>yield</code>.</p>
+
+    <div class="clear"></div>
 
   </body>
 </html>
