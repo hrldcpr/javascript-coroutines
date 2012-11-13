@@ -11,6 +11,51 @@
 
   <body onload="prettyPrint();">
 
+    <pre class="prettyprint">
+function test() {
+    console.log('Hello!');
+    var x = (yield);
+    console.log('First I got: ' + x);
+    var y = (yield);
+    console.log('Then I got: ' + y);
+}
+
+var tester = test();
+tester.next();
+tester.send('this');
+tester.send('that');
+    </pre>
+    <pre>->A->B-></pre>
+
+    <pre class="prettyprint">
+function tags() {
+    while (true) {
+        var c = (yield);
+        if (c == '<') {
+            while (true) {
+                var c = (yield);
+                if (c != '>') console.log(c);
+                if (c == '>') break;
+           }
+        }
+    }
+}
+    </pre>
+
+    <pre class="prettyprint">
+function tags() {
+    var c;
+    while (c = (yield)) {
+        if (c == '<') {
+            while (c = (yield)) {
+                if (c != '>') console.log(c);
+                if (c == '>') break;
+           }
+        }
+    }
+}
+    </pre>
+
     <h1>Javascript Coroutines and Event Handling</h1>
 
     <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.</p>
