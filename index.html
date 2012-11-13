@@ -27,6 +27,20 @@ tester.send('that');
     </pre>
     <pre>->A->B-></pre>
 
+    <pre>
+function coroutine(f) {
+    var handler = f();
+    handler.next();
+    return function(x) {
+        handler.send(x);
+    }
+}
+
+var send = coroutine(test);
+send('this');
+send('that');
+    </pre>
+
     <pre class="prettyprint">
 function tags() {
     while (true) {

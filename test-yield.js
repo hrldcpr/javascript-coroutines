@@ -17,11 +17,7 @@ function loop() {
 
 // register the listeners:
 $(function() {
-    var handler = loop(); handler.next(); // starts the coroutine
-    function send(event) {
-        handler.send(event);
-    }
-
+    var send = coroutine(loop);
     $('#box').mousedown(send);
     $(window).mousemove(send).mouseup(send);
 
@@ -30,3 +26,11 @@ $(function() {
         event.preventDefault();
     });
 });
+
+function coroutine(f) {
+    var handler = f();
+    handler.send();
+    return function(x) {
+        handler.send(x);
+    }
+}
