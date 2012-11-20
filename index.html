@@ -36,13 +36,13 @@ function test() {
 </pre>
 
     <p>To initiate an instance of a coroutine you just call the function, which returns a coroutine object:</p>
-    <pre class="prettyprint">var tester = test(); // no output yet</pre>
+    <pre class="prettyprint">var tester = test();</pre>
     <p>So far none of the function will have executed, so we must execute the function until it hits a <code>yield</code>, by calling:</p>
-    <pre class="prettyprint">tester.send(); // outputs 'Hello!'</pre>
+    <pre class="prettyprint">tester.send(); // prints 'Hello!'</pre>
     <p>Now <code>tester</code> is paused at the first <code>yield</code>, and we can resume the coroutine by sending a value to the <code>yield</code> where it is paused:</p>
-    <pre class="prettyprint">tester.send('a cat'); // outputs 'First I got: a cat'</pre>
+    <pre class="prettyprint">tester.send('a cat'); // prints 'First I got: a cat'</pre>
     <p>Now <code>tester</code> is paused at the second <code>yield</code>, and we can send another value:</p>
-    <pre class="prettyprint">tester.send('a dog'); // outputs 'Then I got: a dog'</pre>
+    <pre class="prettyprint">tester.send('a dog'); // prints 'Then I got: a dog'</pre>
 
     <p>That's about all there is to coroutines&mdash;they are functions which can suspend themselves using the <code>yield</code> keyword,
       and you can communicate with them by sending values, which will be returned as the value of <code>yield</code> and resume execution.</p>
@@ -78,10 +78,10 @@ var test = coroutine(function() {
     var y = yield;
     console.log('Then I got: ' + y);
 });
-// outputs 'Hello!'
+// prints 'Hello!'
 
-test('a dog'); // outputs 'First I got: a dog'
-test('a cat'); // outputs 'Then I got: a cat'
+test('a dog'); // prints 'First I got: a dog'
+test('a cat'); // prints 'Then I got: a cat'
 </pre>
 
     <h2>A Coroutine Loop</h2>
@@ -99,9 +99,9 @@ var clock = coroutine(function() {
     }
 });
 
-clock(); // outputs 'Tick!'
-clock(); // outputs 'Tock!'
-clock(); // outputs 'Tick!'
+clock(); // prints 'Tick!'
+clock(); // prints 'Tock!'
+clock(); // prints 'Tick!'
 </pre>
 
     <p><em>Note that in Javascript, calling <code>clock()</code> with no argument is the same as calling <code>clock(undefined)</code>,
