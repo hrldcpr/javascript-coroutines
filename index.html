@@ -105,9 +105,9 @@ clock(); // prints 'Tick!'
 </pre>
 
     <p><em>Note that in Javascript, calling <code>clock()</code> with no argument is the same as calling <code>clock(undefined)</code>,
-      which in this case is fine since the coroutine doesn't even look at the values being sent to it.</em></p>
+      which in this case is fine since this coroutine doesn't even look at the values being sent to it.</em></p>
 
-    <p>Now let's make this clock tick/tock once every second. It's very easy:</p>
+    <p>Now let's make the clock tick/tock once every second. It's very easy:</p>
     <pre class="prettyprint">setInterval(clock, 1000);</pre>
     <p>We are resuming the coroutine once every 1000ms, and it will tick and tock for eternity.</p>
 
