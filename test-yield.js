@@ -1,9 +1,18 @@
+function coroutine(f) {
+    var o = f();
+    o.send();
+    return function(x) {
+        o.send(x);
+    }
+}
+
+
 function move(event) {
     $('#box').css({left: event.pageX - 50,
                    top: event.pageY - 50});
 }
 
-function loop() {
+var loop = coroutine(function() {
     var event;
     while (event = yield) {
         if (event.type == 'mousedown') {
@@ -13,24 +22,15 @@ function loop() {
             }
         }
     }
-}
+});
 
 // register the listeners:
 $(function() {
-    var send = coroutine(loop);
-    $('#box').mousedown(send);
-    $(window).mousemove(send).mouseup(send);
+    $('#box').mousedown(loop);
+    $(window).mousemove(loop).mouseup(loop);
 
     // suppress firefox's annoying dragging behavior:
     $('#box').bind('dragstart', function(event) {
         event.preventDefault();
     });
 });
-
-function coroutine(f) {
-    var handler = f();
-    handler.send();
-    return function(x) {
-        handler.send(x);
-    }
-}
