@@ -11,66 +11,104 @@
 
   <body onload="prettyPrint();">
 
+    <h1>Javascript Coroutines and Callbacks</h1>
+
+    <p>Javascript 1.7, currently only available in Firefox, introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
+    <p>Coroutines can be used to translate multiple callbacks and variable state into a single coroutine with no explicit state,
+      which makes them particularly interesting in Javascript, where the use of callbacks is pervasive.</p>
+    <p>First I'll introduce the basics of coroutines, but if you already know how they work <a href="#clock">skip ahead</a> to the discussion of coroutines, callbacks, and state.</p>
+
+    <h2>Basic Example</h2>
+
+    <p>A coroutine is a function which can suspend itself anywhere in its execution using the <code>yield</code> keyword.</p>
+    <p>It can be resumed at any later point by <em>sending</em> a value to the suspended coroutine. The sent value will appear as the return value of <code>yield</code> and execution will resume until the next <code>yield</code>.</p>
+
+    <p>For example we can create a simple coroutine which will yield twice and print out the values that are sent to it after each yield:</p>
     <pre class="prettyprint">
 function test() {
     console.log('Hello!');
-    var x = (yield);
+    var x = yield;
     console.log('First I got: ' + x);
-    var y = (yield);
+    var y = yield;
     console.log('Then I got: ' + y);
 }
-
-var tester = test();
-tester.next();
-tester.send('this');
-tester.send('that');
     </pre>
-    <pre>->A->B-></pre>
 
-    <pre>
+    <p>To initiate an instance of a coroutine you just call the function, which returns a coroutine object:</p>
+    <pre class="prettyprint">var tester = test(); // no output yet</pre>
+    <p>So far none of the function will have executed, so we must execute the function until it hits a <code>yield</code>, by calling:</p>
+    <pre class="prettyprint">tester.send(); // outputs 'Hello!'</pre>
+    <p>Now <code>tester</code> is paused at the first <code>yield</code>, and we can resume the coroutine by sending a value to the <code>yield</code> where it is paused:</p>
+    <pre class="prettyprint">tester.send('a cat'); // outputs 'First I got: a cat'</pre>
+    <p>Now <code>tester</code> is paused at the second <code>yield</code>, and we can send another value:</p>
+    <pre class="prettyprint">tester.send('a dog'); // outputs 'Then I got: a dog'</pre>
+
+    <p>That's about all there is to coroutines&mdash;they are functions which can suspend themselves using the <code>yield</code> keyword, and you can communicate with them by sending values, which will return the sent value as the value of <code>yield</code> and resume execution.</p>
+
+    <h2>A Coroutine Wrapper</h2>
+    <p>Every time you use a coroutine you always do three things:</p>
+    <ol>
+      <li>Call the underlying function and store the resulting coroutine object.</li>
+      <li>Call <code>send()</code> on the coroutine object, to execute until the first <code>yield</code>.</li>
+      <li>After that all you can do is call <code>send(...)</code> to run the coroutine and send it values.</li>
+    </ol>
+
+    <p>We can put all of this functionality into a wrapper function:</p>
+    <pre class="prettyprint">
 function coroutine(f) {
-    var handler = f();
-    handler.next();
+    var o = f(); // instantiate the coroutine
+    o.send(); // execute until the first yield
     return function(x) {
-        handler.send(x);
+        o.send(x);
     }
 }
+    </pre>
+    <p>This sets up the coroutine and returns a function which we can call directly instead of calling <code>send</code> on the coroutine object.</p>
 
-var send = coroutine(test);
-send('this');
-send('that');
+    <p>Using this wrapper, our earlier example becomes:</p>
+    <pre class="prettyprint">
+var test = coroutine(function() {
+    console.log('Hello!');
+    var x = yield;
+    console.log('First I got: ' + x);
+    var y = yield;
+    console.log('Then I got: ' + y);
+});
+// outputs 'Hello!'
+
+test('a dog'); // outputs 'First I got: a dog'
+test('a cat'); // outputs 'Then I got: a cat'
+    </pre>
+
+    <h2>Coroutines As State Machines</h2>
+
+    <pre class="prettyprint">
+var tick = true;
+function tickTock() {
+    if (tick)
+        console.log('Tick!');
+    else
+        console.log('Tock!');
+    tick = !tick;
+}
+
+setInterval(tickTock, 1000);
     </pre>
 
     <pre class="prettyprint">
-function tags() {
+var tickTock = coroutine(function() {
     while (true) {
-        var c = (yield);
-        if (c == '<') {
-            while (true) {
-                var c = (yield);
-                if (c != '>') console.log(c);
-                if (c == '>') break;
-           }
-        }
+        yield;
+        console.log('Tick!');
+        yield;
+        console.log('Tock!');
     }
-}
+});
+
+setInterval(tickTock, 1000);
     </pre>
 
-    <pre class="prettyprint">
-function tags() {
-    var c;
-    while (c = (yield)) {
-        if (c == '<') {
-            while (c = (yield)) {
-                if (c != '>') console.log(c);
-                if (c == '>') break;
-           }
-        }
-    }
-}
-    </pre>
-
-    <h1>Javascript Coroutines and Event Handling</h1>
+    <pre>A<->B</pre>
 
     <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.</p>
     <p>Javascript makes extensive use of callbacks, which make Javascript coroutines particularly interesting because they can be used to 'invert' multiple callbacks into a single imperative event loop.</p>
@@ -108,7 +146,7 @@ $(window).mousemove(onmousemove)
       <p>draggable div using a coroutine event loop: (Firefox only)</p>
       <p><iframe src="test-yield.html" width="400px" height="400px"></iframe></p>
       <pre class="prettyprint">
-function loop() {
+var loop = coroutine(function() {
     var event;
     while (event = (yield)) {
         if (event.type == 'mousedown') {
@@ -118,15 +156,12 @@ function loop() {
             }
         }
     }
-}
+});
 
 // register the listeners:
-var handler = loop(); handler.next();
-function send(event) {
-    handler.send(event);
-}
-$('#box').mousedown(send);
-$(window).mousemove(send).mouseup(send);
+$('#box').mousedown(loop);
+$(window).mousemove(loop)
+    .mouseup(loop);
       </pre>
     </div>
 
@@ -151,7 +186,7 @@ $(window).mousemove(send).mouseup(send);
     <p>We register event listeners that send events to <code>loop()</code> such that the <code>yield</code> statements returns events as they happen:</p>
     <ol>
       <li>We instantiate the coroutine with <code class="prettyprint">var handler = loop();</code></li>
-      <li>We call <code class="prettyprint">handler.next();</code> to 'prime' the coroutine by running it until it blocks on the first <code>yield</code>.</li>
+      <li>We call <code class="prettyprint">handler.send();</code> to 'prime' the coroutine by running it until it blocks on the first <code>yield</code>.</li>
       <li>We define the <code>send</code> function which simply sends its argument to the coroutine, and is thus the perfect function to register as a callback on all the events we wish to be sent to the coroutine.</li>
     </ol>
     <p>So now each event we are listening to is sent to the coroutine, and it resumes at whichever <code>yield</code> it is blocked on, with the sent event being returned as the value of <code>yield</code>.</p>
