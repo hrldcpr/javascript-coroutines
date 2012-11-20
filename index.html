@@ -148,9 +148,9 @@ $(window).mousemove(onmousemove)
       <pre class="prettyprint">
 var loop = coroutine(function() {
     var event;
-    while (event = (yield)) {
+    while (event = yield) {
         if (event.type == 'mousedown') {
-            while (event = (yield)) {
+            while (event = yield) {
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
@@ -168,9 +168,9 @@ $(window).mousemove(loop)
     <h3 class="clear">Notes</h2>
     <ul>
       <li><code>move(event)</code> is defined elsewhere and simply moves the div.</li>
-      <li><p><code class="prettyprint">while (event = (yield)) { ... }</code>
+      <li><p><code class="prettyprint">while (event = yield) { ... }</code>
         is equivalent to:</p>
-        <p><code class="prettyprint">while (true) { event = (yield); ... }</code>
+        <p><code class="prettyprint">while (true) { event = yield; ... }</code>
         since we will never send anything 'falsey' to the coroutine.</p>
         <p>This just makes for more concise event loop syntax, in my opinion.</p></li>
     </ul>

@@ -5,9 +5,9 @@ function move(event) {
 
 function loop() {
     var event;
-    while (event = (yield)) {
+    while (event = yield) {
         if (event.type == 'mousedown') {
-            while (event = (yield)) {
+            while (event = yield) {
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
