@@ -84,7 +84,7 @@ test('a dog'); // outputs 'First I got: a dog'
 test('a cat'); // outputs 'Then I got: a cat'
 </pre>
 
-    <h2>A Coroutine Clock</h2>
+    <h2>A Coroutine Loop</h2>
 
     <p>Our first example coroutine yields twice and then ends. Let's make a never-ending coroutine instead.</p>
     <p>Here's a coroutine that never ends, and each time you resume it, it alternates between ticking and tocking:</p>
@@ -109,25 +109,55 @@ clock.send(); // outputs 'Tick!'
 
     <p>Now let's make this clock tick/tock once every second. It's very easy:</p>
     <pre class="prettyprint">setInterval(clock, 1000);</pre>
-    <p>Now we are resuming the coroutine once every 1000ms, and it will tick and tock for eternity.</p>
+    <p>We are resuming the coroutine once every 1000ms, and it will tick and tock for eternity.</p>
 
+
+    <h2>A Coroutine Event Loop</h2>
 <pre class="prettyprint">
-var tick = true;
-function tickTock() {
-    if (tick)
+var loop = coroutine(function() {
+    var event;
+    while (event = yield) {
+        if (event.type == 'mousedown') {
+            while (event = yield) {
+                if (event.type == 'mousemove') move(event);
+                if (event.type == 'mouseup') break;
+            }
+        }
+    }
+});
+
+$('#box').mousedown(loop);
+$(window).mousemove(loop).mouseup(loop);
+</pre>
+
+
+    <h2>Coroutines as State Machines</h2>
+
+    <p>Let's return to the <code>clock</code> example earlier:</p>
+    <pre>...</pre>
+
+    <p>Of course, we could already do this without coroutines, using a normal callback function:</p>
+<pre class="prettyprint">
+var ticking = true;
+function clock() {
+    if (ticking)
         console.log('Tick!');
     else
         console.log('Tock!');
-    tick = !tick;
+    ticking = !ticking;
 }
 
-setInterval(tickTock, 1000);
+setInterval(clock, 1000);
 </pre>
 
-<pre>A<->B</pre>
-
-    <p>Javascript 1.7 adds support for Python-style generators and coroutines, using the <code>yield</code> keyword.</p>
-    <p>Javascript makes extensive use of callbacks, which make Javascript coroutines particularly interesting because they can be used to 'invert' multiple callbacks into a single imperative event loop.</p>
+    <p>But the very interesting difference is that the coroutine version involves no <code>ticking</code> variable,
+      and is never explicitly storing any state.</p>
+    <p>Without using coroutines you <em>must</em> use a variable to store the state of whether the next call should tick or tock.</p>
+    <p>This variable can only be avoided because <strong>coroutines add an entirely new form of state</strong> to the language,
+      namely the state of where the coroutine is currently suspended.</p>
+    <p>One benefit of this 'implicit' coroutine state is that it is guaranteed to be consistent.
+      This differs from the variable state, which could easily become invalid if we do something like <code>ticking='maybe'</code>.</p>
+    <p>Of course, this simplicity also means that we can only represent very simple states, that can be represented as control flow.</p>
 
     <h2>For Example: A Draggable Div</h2>
 
