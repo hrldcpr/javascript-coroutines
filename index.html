@@ -268,10 +268,18 @@ $(window).mousemove(onmousemove).mouseup(onmouseup);
     <p>callbacks and a variable for dragging</p>
     </div>
 
-    <p class="clear">This writeup was inspired by and is largely just an elaboration on the section "Coroutines and Event Dispatching" starting on page 53
+    <p class="clear">These examples of coroutine event loops are no better than their standard callback function equivalents,
+      but it seems possible that some state machines could be more elegantly implemented as coroutines,
+      perhaps something involving Ajax requests or something in node.js, where almost everything is a callback.</p>
+    <p>If Javascript coroutines receive cross-browser support it will be interesting to see how people use them.</p>
+
+    <p class="clear">This writeup was inspired by the section "Coroutines and Event Dispatching" starting on page 53
       of David Beazley's mind-blowing presentation <em><a href="http://www.dabeaz.com/coroutines/Coroutines.pdf">A Curious Course on Coroutines and Concurrency</a></em>.</p>
 
-    <div class="footer">Harold Cooper, November 2012</div>
+    <div class="footer">
+      <p>Harold Cooper, November 2012</p>
+      <p>view <a href="https://github.com/hrldcpr/javascript-coroutines">the source</a> on github</p>
+    </div>
 
   </body>
 </html>

@@ -49,6 +49,7 @@ li {
     margin: 2em;
     text-align: center;
     font-style: italic;
+    border-top: 1px solid #ccc;
 }
 
 .left {
