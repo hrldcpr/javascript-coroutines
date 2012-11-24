@@ -1,0 +1,6 @@
+digraph {
+  node [fontname = "helvetica"];
+  edge [fontname = "helvetica"];
+  "Tick!" -> "Tock!";
+  "Tock!" -> "Tick!";
+}

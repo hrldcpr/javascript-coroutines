@@ -1,5 +1,7 @@
 digraph {
-  "Not Dragging" -> "Dragging" [label = " mousedown  "];
-  "Dragging" -> "Dragging" [label = " mousemove"];
-  "Dragging" -> "Not Dragging" [label = " mouseup"];
+  node [fontname = "helvetica"];
+  edge [fontname = "helvetica"];
+  "Not Dragging" -> "Dragging" [label = "  mousedown  "];
+  "Dragging" -> "Dragging" [label = "  mousemove"];
+  "Dragging" -> "Not Dragging" [label = "  mouseup"];
 }
