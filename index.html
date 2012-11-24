@@ -14,10 +14,11 @@
     <h1>Coroutine Event Loops in Javascript</h1>
 
     <p>Javascript 1.7, currently only available in Firefox, introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
-    <p>Coroutines can be used to implement event loops as an alternative to callback functions,
+    <p>One thing coroutines can be used for is to implement event loops as an alternative to callback functions,
       which makes them particularly interesting in Javascript, where the use of callbacks is pervasive.</p>
-    <p>First I'll review the basics of coroutines, but you can <a href="#loops">skip ahead</a> to the discussion of coroutine event loops.</p>
+    <p>It's not clear to me if Javascript coroutines are actually useful, but at the very least they're interesting to think about.</p>
 
+    <p><strong>If you're in a hurry:</strong> a <a href="test-yield.html">Firefox-only demo</a> of a coroutine event loop, and <a href="https://github.com/hrldcpr/javascript-coroutines/blob/master/test-yield.js">the code</a>.</p>
 
     <h2>The Basics</h2>
 
@@ -84,6 +85,7 @@ test('a dog'); // prints 'First I got: a dog'
 test('a cat'); // prints 'Then I got: a cat'
 </pre>
 
+
     <h2>A Coroutine Loop</h2>
 
     <p>Our first example coroutine yields twice and then ends. Let's make a never-ending coroutine instead.</p>
@@ -109,11 +111,47 @@ clock(); // prints 'Tick!'
 
     <p>Now let's make the clock tick/tock once every second. It's very easy:</p>
     <pre class="prettyprint">setInterval(clock, 1000);</pre>
-    <p>We are resuming the coroutine once every 1000ms, and it will tick and tock for eternity.</p>
+    <p>This resumes the coroutine once every 1000ms, and it will tick and tock for eternity.</p>
 
 
     <h2>A Coroutine Event Loop</h2>
+
+    <p>Just like we used the <code>clock</code> function above as a timer callback,
+      we can use coroutines as callbacks for events,
+      and the event object will be sent to the running coroutine.</p>
+    <p>For example suppose we want to implement this little demo, where the user can drag a box around:</p>
+    <p><iframe src="test.html" width="400px" height="400px"></iframe></p>
+    <p>To implement this, we would first listen for a <code>mousedown</code> on the box,
+      then process any <code>mousemove</code> events to actually move the box,
+      until we see a <code>mouseup</code> event, at which point we're back where we started.</p>
+
+    <p>We can implement this as a coroutine that receives events from <code>yield</code>:</p>
 <pre class="prettyprint">
+var loop = coroutine(function() {
+    while (true) { // wait for a mousedown
+        var event = yield;
+        if (event.type == 'mousedown') {
+            while (true) { // process mousemoves until a mousedown
+                var event = yield;
+                if (event.type == 'mousemove') move(event);
+                if (event.type == 'mouseup') break;
+            }
+        }
+    }
+});
+</pre>
+    <p>This ends up being a pretty direct translation of our description into code.
+      We can make it slightly more concise by noticing that event objects are always 'truthy',
+      so we can change the while loops to:</p>
+    <pre class="prettyprint">while (event = yield) { ... }</pre>
+    <p>This form of infinite loop is the heart of a coroutine event loop.</p>
+
+    <p>Here is the final implementation of the draggable box using a coroutine event loop:</p>
+<pre class="prettyprint">
+function move(event) {
+    $('#box').css({left: event.pageX, top: event.pageY});
+}
+
 var loop = coroutine(function() {
     var event;
     while (event = yield) {
@@ -133,64 +171,59 @@ $(window).mousemove(loop).mouseup(loop);
 
     <h2>Coroutines as State Machines</h2>
 
-    <p>Let's return to the <code>clock</code> example earlier:</p>
-    <pre>...</pre>
-
-    <p>Of course, we could already do this without coroutines, using a normal callback function:</p>
+    <p>Let's return to the <code>clock</code> example earlier.
+      We can implement it using coroutines as above,
+      or we can of course implement it without coroutines, using a normal function and a variable:</p>
+    <div class="figure left">
+<pre class="prettyprint">
+var clock = coroutine(function() {
+    while (true) {
+        yield;
+        console.log('Tick!');
+        yield;
+        console.log('Tock!');
+    }
+});
+</pre>
+        <p>clock as a coroutine</p>
+    </div>
+    <div class="figure left">
 <pre class="prettyprint">
 var ticking = true;
-function clock() {
+var clock = function() {
     if (ticking)
         console.log('Tick!');
     else
         console.log('Tock!');
     ticking = !ticking;
 }
-
-setInterval(clock, 1000);
 </pre>
+        <p>clock as a function and a variable</p>
+    </div>
+    <div class="clear"></div>
 
-    <p>But the very interesting difference is that the coroutine version involves no <code>ticking</code> variable,
-      and is never explicitly storing any state.</p>
+    <div class="figure right">
+      <img src="clock.svg">
+      <p>the clock state machine</p>
+    </div>
+    <div class="clear figure right">
+      <img src="dragging.svg">
+      <p>the dragging state machine</p>
+    </div>
+    <p>Both implementations behave the same, and implement the same simple 2-state machine, as pictured.</p>
+    <p>The interesting difference between the two implementations
+      is that the coroutine version involves no <code>ticking</code> variable,
+      and never explicitly stores any state.</p>
     <p>Without using coroutines you <em>must</em> use a variable to store the state of whether the next call should tick or tock.</p>
     <p>This variable can only be avoided because <strong>coroutines add an entirely new form of state</strong> to the language,
       namely the state of where the coroutine is currently suspended.</p>
     <p>One benefit of this 'implicit' coroutine state is that it is guaranteed to be consistent.
-      This differs from the variable state, which could easily become invalid if we do something like <code>ticking='maybe'</code>.</p>
-    <p>Of course, this simplicity also means that we can only represent very simple states, that can be represented as control flow.</p>
+      This differs from the variable state, which could easily become invalid if we do something like <code>ticking="maybe"</code>.</p>
 
-    <h2>For Example: A Draggable Div</h2>
-
-    <p>Below are two implementations of a draggable div, one using standard Javascript callbacks, the other using a coroutine event loop.
-      The coroutine implementation requires Firefox, which is currently the only browser that supports Javascript 1.7.</p>
-    <p>Comparing the code side-by-side, you can see the structural difference between multiple callbacks and a single event loop.</p>
+    <p>Similarly, here are the two implementations and a state diagram for the dragging example.
+      Once again the coroutine implementation uses no explicit state, while the callback version must:</p>
 
     <div class="figure left">
-      <p>draggable div using callbacks:</p>
-      <p><iframe src="test.html" width="400px" height="400px"></iframe></p>
-<pre class="prettyprint">
-var dragging = false;
-function onmousedown(event) {
-    dragging = true;
-}
-function onmousemove(event) {
-    if (dragging)
-        move(event);
-}
-function onmouseup(event) {
-    dragging = false;
-}
-
-// register the listeners:
-$('#box').mousedown(onmousedown);
-$(window).mousemove(onmousemove)
-    .mouseup(onmouseup);
-</pre>
-    </div>
-
-    <div class="figure left">
-      <p>draggable div using a coroutine event loop: (Firefox only)</p>
-      <p><iframe src="test-yield.html" width="400px" height="400px"></iframe></p>
 <pre class="prettyprint">
 var loop = coroutine(function() {
     var event;
@@ -204,50 +237,72 @@ var loop = coroutine(function() {
     }
 });
 
-// register the listeners:
 $('#box').mousedown(loop);
-$(window).mousemove(loop)
-    .mouseup(loop);
+$(window).mousemove(loop).mouseup(loop);
 </pre>
+    <p>a coroutine event loop for dragging</p>
     </div>
 
-    <h3 class="clear">Notes</h2>
-    <ul>
-      <li><code>move(event)</code> is defined elsewhere and simply moves the div.</li>
-      <li><p><code class="prettyprint">while (event = yield) { ... }</code>
-        is equivalent to:</p>
-        <p><code class="prettyprint">while (true) { event = yield; ... }</code>
-        since we will never send anything 'falsey' to the coroutine.</p>
-        <p>This just makes for more concise event loop syntax, in my opinion.</p></li>
-    </ul>
+    <div class="figure left">
+<pre class="prettyprint">
+var dragging = false;
+function onmousedown(event) {
+    dragging = true;
+}
+function onmousemove(event) {
+    if (dragging)
+        move(event);
+}
+function onmouseup(event) {
+    dragging = false;
+}
 
-    <h2>How It Works</h2>
-
-    <p><code>loop()</code> is always in one of two states, depending on which <code>yield</code> it is blocked on:</p>
-    <ol>
-      <li>At the outer <code>yield</code> it loops through events until it receives a mousedown, at which point it enters the inner loop.</li>
-      <li>Then it moves to the inner <code>yield</code>, where it processes mousemoves until it receives a mouseup, at which point it breaks back to the outer loop.</li>
-    </ol>
-
-    <p>We register event listeners that send events to <code>loop()</code> such that the <code>yield</code> statements returns events as they happen:</p>
-    <ol>
-      <li>We instantiate the coroutine with <code class="prettyprint">var handler = loop();</code></li>
-      <li>We call <code class="prettyprint">handler.send();</code> to 'prime' the coroutine by running it until it blocks on the first <code>yield</code>.</li>
-      <li>We define the <code>send</code> function which simply sends its argument to the coroutine, and is thus the perfect function to register as a callback on all the events we wish to be sent to the coroutine.</li>
-    </ol>
-    <p>So now each event we are listening to is sent to the coroutine, and it resumes at whichever <code>yield</code> it is blocked on, with the sent event being returned as the value of <code>yield</code>.</p>
-
-    <h2>Explicit And Implicit State</h2>
-    <div class="figure right">
-      <img src="dragging.svg">
-      <p>the dragging state machine</p>
+$('#box').mousedown(onmousedown);
+$(window).mousemove(onmousemove).mouseup(onmouseup);
+</pre>
+    <p>callbacks and a variable for dragging</p>
     </div>
 
-    <p>Both approaches implement the same state machine, using completely different mechanisms:</p>
-    <p>In the callback approach, the state is stored explicitly in the <code>dragging</code> variable, with the two states corresponding to <code>dragging==false</code> and <code>dragging==true</code>.</p>
-    <p>In the coroutine approach, the state is stored implicitly, in terms of which <code>yield</code> the coroutine is currently blocked on, with the not-dragging state corresponding to the outer <code>yield</code> and the dragging state corresponding to the inner <code>yield</code>.</p>
 
-    <div class="clear credits">Harold Cooper, November 2012</div>
+    <h2>Conclusion</h2>
+
+    <p>These example coroutine event loops are no better than the equivalent callback implementations,
+      but there may be more complex state machines which would benefit from coroutine implementations.</p>
+    <p>This may be particularly true in node.js, where callbacks are used for more than just interface events.</p>
+    <p>Of course, the <code>yield</code> keyword is undeniably useful for building <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Iterators_and_Generators#Generators.3A_a_better_way_to_build_Iterators">generators</a>,
+      so I expect it will make its way into Javascript soon enough,
+      regardless of the usefulness of coroutines.</p>
+    <p>This writeup was inspired by and is largely just an elaboration on the section "Coroutines and Event Dispatching"
+      of David Beazley's mind-blowing presentation <em><a href="http://www.dabeaz.com/coroutines/Coroutines.pdf">A Curious Course on Coroutines and Concurrency</a></em>
+      starting on page 53.</p>
+
+    <h2>Addendum &ndash; Functions Instead Of Objects</h2>
+
+    <p>I think Javascript 1.7's verbatim copying of Python's coroutine/generator objects is a little awkward.</p>
+    <p>For my uses, it would be better if calling a coroutine returned a function, equivalent to <code>send</code> (which is what the <code>coroutine</code> wrapper above does).
+      Then you'd use a coroutine like:</p>
+<pre class="prettyprint">
+function test() {
+    console.log('Hello!');
+    var x = yield;
+    console.log('First I got: ' + x);
+    var y = yield;
+    console.log('Then I got: ' + y);
+}
+
+var tester = test();
+tester(); // prints 'Hello!'
+tester('a dog'); // prints 'First I got: a dog'
+tester('a cat'); // prints 'Then I got: a cat'
+</pre>
+    <p>This would work for both coroutines and <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Iterators_and_Generators#Ge\
+nerators.3A_a_better_way_to_build_Iterators">generators</a>,
+      because in Javascript calling <code>send()</code> is equivalent to <code>send(undefined)</code> which is equivalent to <code>next()</code>,
+      so there's no need for two separate functions.</p>
+    <p>The issue with this approach is that you'd lose the <code>close</code> method of coroutine/generator objects,
+      which is probably useful sometimes, oh well :'(</p>
+
+    <div class="footer">Harold Cooper, November 2012</div>
 
   </body>
 </html>

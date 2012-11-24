@@ -1,10 +1,10 @@
 body {
-    background: #eee;
+    background: #f8f8f8;
 }
 
 #box {
     position: absolute;
     width: 100px;
     height: 100px;
-    background: #aaf;
+    background: #4ac;
 }

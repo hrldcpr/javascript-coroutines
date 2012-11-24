@@ -1,12 +1,11 @@
 html {
-    background: #888;
+    background: #333;
 }
 
 body {
-    margin: 0.5em auto;
-    padding: 1em;
-    font-size: 14pt;
-    background: #fff;
+    margin: 1em auto;
+    padding: 0.5em 2em;
+    background: white;
     max-width: 800px;
 }
 
@@ -14,14 +13,30 @@ body>p {
     margin-left: 1em;
 }
 
+a {
+    text-decoration: none;
+}
+
+h2 {
+    clear: both;
+    padding: 1em 0em 0.2em 0em;
+    border-bottom: 1px solid #ccc;
+}
+
 iframe {
-    border-style: none;
+    border: solid 1px #ccc;
 }
 
 pre {
-    background: #eee;
+    clear: both;
+    background: #f8f8f8;
     padding: 1em;
     margin: 0;
+    border: 1px solid #ccc;
+}
+
+code {
+    white-space: nowrap;
 }
 
 code.prettyprint {
@@ -32,7 +47,9 @@ li {
     margin-bottom: 0.5em;
 }
 
-.credits {
+.footer {
+    clear: both;
+    margin: 2em;
     text-align: center;
     font-style: italic;
 }
