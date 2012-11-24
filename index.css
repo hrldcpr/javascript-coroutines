@@ -5,12 +5,9 @@ html {
 body {
     margin: 1em auto;
     padding: 0.5em 2em;
+    font-size: 14pt;
     background: white;
-    max-width: 800px;
-}
-
-body>p {
-    margin-left: 1em;
+    max-width: 900px;
 }
 
 a {
