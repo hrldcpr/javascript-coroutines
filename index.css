@@ -44,6 +44,13 @@ li {
     margin-bottom: 0.5em;
 }
 
+.contents {
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+}
+
 .footer {
     clear: both;
     margin: 2em;

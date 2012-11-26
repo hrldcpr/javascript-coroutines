@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Coroutine Event Loops in Javascript</title>
+
     <link rel="stylesheet" type="text/css" href="normalize.css" />
 
     <link rel="stylesheet" type="text/css" href="prettify.css" />
@@ -13,14 +15,25 @@
 
     <h1>Coroutine Event Loops in Javascript</h1>
 
+    <div class="contents right">
+      <ul>
+        <li><a href="#the-basics">The Basics</a></li>
+        <li><a href="#the-convenient-coroutine-wrapper">The Convenient <code>coroutine</code> Wrapper</a></li>
+        <li><a href="#a-coroutine-loop">A Coroutine Loop</a></li>
+        <li><a href="#a-coroutine-event-loop">A Coroutine Event Loop</a></li>
+        <li><a href="#coroutines-as-state-machines">Coroutines As State Machines</a></li>
+      </ul>
+    </div>
+
     <p>Javascript 1.7, currently only available in Firefox, introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
     <p>An intriguing use of coroutines is to implement event loops as an alternative to callback functions.
       This is particularly relevant to Javascript, where the use of callbacks is pervasive.</p>
     <p>Javascript coroutines might not actually be useful, but they're fun to think about.</p>
 
-    <p><strong>If you're in a hurry:</strong> a <a href="test-yield.html">Firefox-only demo</a> of a coroutine event loop, and <a href="https://github.com/hrldcpr/javascript-coroutines/blob/master/test-yield.js">the code</a>.</p>
+    <p><strong>If you're in a hurry:</strong><br/>
+      a <a href="test-yield.html">Firefox-only demo</a> of a coroutine event loop, and <a href="https://github.com/hrldcpr/javascript-coroutines/blob/master/test-yield.js">the code</a>.</p>
 
-    <h2>The Basics</h2>
+    <a name="the-basics"><h2>The Basics</h2></a>
 
     <p>A coroutine is a function which can suspend itself anywhere in its execution using the <code>yield</code> keyword.</p>
     <p>It can be resumed at any later point by <em>sending</em> it a value. The sent value will appear as the return value of <code>yield</code> and execution will resume until the next <code>yield</code>.</p>
@@ -49,7 +62,7 @@ function test() {
       and you can communicate with them by sending values, which will be returned as the value of <code>yield</code> and resume execution.</p>
 
 
-    <h2>The Convenient <code>coroutine</code> Wrapper</h2>
+    <a name="the-convenient-coroutine-wrapper"><h2>The Convenient <code>coroutine</code> Wrapper</h2></a>
 
     <p>Every time you use a coroutine you always do three things:</p>
     <ol>
@@ -86,7 +99,7 @@ test('a cat'); // prints 'Then I got: a cat'
 </pre>
 
 
-    <h2>A Coroutine Loop</h2>
+    <a name="a-coroutine-loop"><h2>A Coroutine Loop</h2></a>
 
     <p>Our first example coroutine yields twice and then ends. Let's make a never-ending coroutine instead.</p>
     <p>Here's a coroutine that never ends, and each time you resume it, it alternates between ticking and tocking:</p>
@@ -114,7 +127,7 @@ clock(); // prints 'Tick!'
     <p>This resumes the coroutine once every 1000ms, and it will tick and tock for eternity.</p>
 
 
-    <h2>A Coroutine Event Loop</h2>
+    <a name="a-coroutine-event-loop"><h2>A Coroutine Event Loop</h2></a>
 
     <p>In the same way that we used the <code>clock</code> function above as a timer callback,
       we can use coroutines as callbacks for events,
@@ -173,7 +186,7 @@ $(window).mousemove(loop).mouseup(loop);
     <p>If you're using Firefox you can <a href="test-yield.html">try the demo</a>.
       Here is the full <a href="https://github.com/hrldcpr/javascript-coroutines/blob/master/test-yield.js">Javascript source</a>.</p>
 
-    <h2>Coroutines as State Machines</h2>
+    <a name="coroutines-as-state-machines"><h2>Coroutines as State Machines</h2></a>
 
     <p>Let's return to the <code>clock</code> example earlier.
       We can implement it using coroutines as above,
