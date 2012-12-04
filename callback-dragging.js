@@ -1,10 +1,12 @@
 function move(event) {
-    $('#box').css({left: event.pageX - 50,
-                   top: event.pageY - 50});
+    var parent = $('#box').parent().offset();
+    $('#box').css({left: event.pageX - parent.left - 50,
+                   top: event.pageY - parent.top - 50});
 }
 
 var dragging = false;
 function onmousedown(event) {
+    event.preventDefault(); // stop Chrome from trying to select text
     dragging = true;
 }
 function onmousemove(event) {
@@ -20,8 +22,7 @@ $(function() {
     $('#box').mousedown(onmousedown);
     $(window).mousemove(onmousemove).mouseup(onmouseup);
 
-    // suppress firefox's annoying dragging behavior:
     $('#box').bind('dragstart', function(event) {
-        event.preventDefault();
+        event.preventDefault(); // stop Firefox from doing weird drag-and-drop things
     });
 });

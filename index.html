@@ -9,6 +9,9 @@
     <script src="prettify.js"></script>
 
     <link rel="stylesheet" type="text/css" href="index.css" />
+
+    <script src="jquery-1.8.2.min.js"></script>
+    <script src="callback-dragging.js"></script>
   </head>
 
   <body onload="prettyPrint();">
@@ -122,9 +125,16 @@ clock(); // prints 'Tick!'
     <p>In the same way that we used the <code>clock</code> function above as a timer callback,
       we can use coroutines as callbacks for events,
       and the event object will be sent to the running coroutine.</p>
-    <p>For example suppose we want to implement this little demo, where the user can drag a box around:</p>
-    <p><iframe src="callback-dragging.html" width="400px" height="400px"></iframe></p>
-    <p>To implement this, we would repeat the following steps:</p>
+    <p>For example suppose we want to implement this little demo, in which the user can drag a box around:</p>
+
+    <div class="figure left">
+      <div id="space">
+        <div id="box"></div>
+      </div>
+      <p>Try dragging the box around!</p>
+    </div>
+
+    <p class="clear">To implement this, we would repeat the following steps:</p>
     <ol>
       <li>wait for a <code>mousedown</code> on the box</li>
       <li>process any <code>mousemove</code> events, and actually move the box</li>

@@ -15,10 +15,6 @@ h2 {
     border-bottom: 1px solid #ccc;
 }
 
-iframe {
-    border: solid 1px #ccc;
-}
-
 pre {
     clear: both;
     background: #f8f8f8;
@@ -66,4 +62,21 @@ li {
 
 .clear {
     clear: both;
+}
+
+#space {
+    width: 400px;
+    height: 400px;
+    background: #f8f8f8;
+    border: solid 1px #ccc;
+    overflow: hidden;
+}
+
+#box {
+    position: relative;
+    top: 50px;
+    left: 50px;
+    width: 100px;
+    height: 100px;
+    background: #4ac;
 }

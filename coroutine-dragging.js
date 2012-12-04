@@ -8,8 +8,9 @@ function coroutine(f) {
 
 
 function move(event) {
-    $('#box').css({left: event.pageX - 50,
-                   top: event.pageY - 50});
+    var parent = $('#box').parent().offset();
+    $('#box').css({left: event.pageX - parent.left - 50,
+                   top: event.pageY - parent.top - 50});
 }
 
 var loop = coroutine(function() {
@@ -29,8 +30,7 @@ $(function() {
     $('#box').mousedown(loop);
     $(window).mousemove(loop).mouseup(loop);
 
-    // suppress firefox's annoying dragging behavior:
     $('#box').bind('dragstart', function(event) {
-        event.preventDefault();
+        event.preventDefault(); // stop Firefox from doing weird drag-and-drop things
     });
 });
