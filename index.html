@@ -133,6 +133,26 @@ clock(); // prints 'Tick!'
       </div>
       <p>Try dragging the box around!</p>
     </div>
+<pre class="prettyprint">
+function move(event) {
+    $('#box').css({left: event.pageX, top: event.pageY});
+}
+
+var loop = coroutine(function() {
+    var event;
+    <span class="not-dragging yield highlighted">while (event = yield) {</span>
+        <span class="not-dragging mousedown-1">if (event.type == 'mousedown') {</span>
+            <span class="dragging yield">while (event = yield) {</span>
+                <span class="dragging mousemove-1">if (event.type == 'mousemove') move(event);</span>
+                <span class="dragging mouseup-1">if (event.type == 'mouseup') break</span>;
+            }
+        }
+    }
+});
+
+$('#box').mousedown(loop);
+$(window).mousemove(loop).mouseup(loop);
+</pre>
 
     <p class="clear">To implement this, we would repeat the following steps:</p>
     <ol>
@@ -163,26 +183,6 @@ var loop = coroutine(function() {
     <p>This form of infinite loop is the heart of a coroutine event loop.</p>
 
     <p>Here is the final implementation of the draggable box using a coroutine event loop:</p>
-<pre class="prettyprint">
-function move(event) {
-    $('#box').css({left: event.pageX, top: event.pageY});
-}
-
-var loop = coroutine(function() {
-    var event;
-    while (event = yield) {
-        if (event.type == 'mousedown') {
-            while (event = yield) {
-                if (event.type == 'mousemove') move(event);
-                if (event.type == 'mouseup') break;
-            }
-        }
-    }
-});
-
-$('#box').mousedown(loop);
-$(window).mousemove(loop).mouseup(loop);
-</pre>
     <p>If you're using Firefox you can <a href="test-yield.html">try the demo</a>.
       Here is the full <a href="https://github.com/hrldcpr/javascript-coroutines/blob/master/test-yield.js">Javascript source</a>.</p>
 

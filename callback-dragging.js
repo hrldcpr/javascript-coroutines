@@ -4,17 +4,35 @@ function move(event) {
                    top: event.pageY - parent.top - 50});
 }
 
+var animation = [];
+setInterval(function() {
+    if (animation.length > 0) {
+        $('.highlighted').removeClass('highlighted');
+        $(animation.shift()).addClass('highlighted');
+    }
+}, 300);
+function animate(classes, force) {
+    if (force || animation.length == 0)
+        Array.prototype.push.apply(animation, classes);
+}
+
 var dragging = false;
 function onmousedown(event) {
     event.preventDefault(); // stop Chrome from trying to select text
     dragging = true;
+    animate(['.not-dragging.mousedown-1', '.dragging.yield'], true);
 }
 function onmousemove(event) {
-    if (dragging)
+    if (dragging) {
         move(event);
+        animate(['.dragging.mousemove-1', '.dragging.yield']);
+    }
 }
 function onmouseup(event) {
-    dragging = false;
+    if (dragging) {
+        dragging = false;
+        animate(['.dragging.mouseup-1', '.not-dragging.yield'], true);
+    }
 }
 
 // register the listeners:

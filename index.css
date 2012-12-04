@@ -80,3 +80,11 @@ li {
     height: 100px;
     background: #4ac;
 }
+
+.yield.highlighted {
+    background: #faa;
+}
+
+.highlighted {
+    background: #afa;
+}
