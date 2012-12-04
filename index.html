@@ -131,20 +131,19 @@ clock(); // prints 'Tick!'
       <div id="space">
         <div id="box"></div>
       </div>
-      <p>Try dragging the box around!</p>
     </div>
-<pre class="prettyprint">
-function move(event) {
-    $('#box').css({left: event.pageX, top: event.pageY});
-}
 
+    <div class="figure left">
+<pre class="prettyprint">
 var loop = coroutine(function() {
     var event;
     <span class="not-dragging yield highlighted">while (event = yield) {</span>
         <span class="not-dragging mousedown-1">if (event.type == 'mousedown') {</span>
             <span class="dragging yield">while (event = yield) {</span>
-                <span class="dragging mousemove-1">if (event.type == 'mousemove')</span> <span class="dragging mousemove-2">move(event);</span>
-                <span class="dragging mouseup-1">if (event.type == 'mouseup')</span> <span class="dragging mouseup-2">break;</span>
+                <span class="dragging mousemove-1">if (event.type == 'mousemove')</span>
+                    <span class="dragging mousemove-2">move(event);</span>
+                <span class="dragging mouseup-1">if (event.type == 'mouseup')</span>
+                    <span class="dragging mouseup-2">break;</span>
             }
         }
     }
@@ -153,6 +152,7 @@ var loop = coroutine(function() {
 $('#box').mousedown(loop);
 $(window).mousemove(loop).mouseup(loop);
 </pre>
+    </div>
 
     <p class="clear">To implement this, we would repeat the following steps:</p>
     <ol>

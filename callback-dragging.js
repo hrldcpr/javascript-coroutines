@@ -1,7 +1,7 @@
 function move(event) {
     var parent = $('#box').parent().offset();
-    $('#box').css({left: event.pageX - parent.left - 50,
-                   top: event.pageY - parent.top - 50});
+    $('#box').css({left: event.pageX - parent.left - 25,
+                   top: event.pageY - parent.top - 25});
 }
 
 var animation = [];
@@ -12,8 +12,11 @@ setInterval(function() {
     }
 }, 300);
 function animate(classes, force) {
-    if (force || animation.length == 0)
+    if (force || animation.length == 0) {
+        if (force && animation.length > 0) // skip to end of current animation
+            animation.splice(0, animation.length - 1);
         Array.prototype.push.apply(animation, classes);
+    }
 }
 
 var dragging = false;
