@@ -25,13 +25,13 @@ function onmousedown(event) {
 function onmousemove(event) {
     if (dragging) {
         move(event);
-        animate(['.dragging.mousemove-1', '.dragging.yield']);
+        animate(['.dragging.mousemove-1', '.dragging.mousemove-2', '.dragging.yield']);
     }
 }
 function onmouseup(event) {
     if (dragging) {
         dragging = false;
-        animate(['.dragging.mouseup-1', '.not-dragging.yield'], true);
+        animate(['.dragging.mouseup-1', '.dragging.mouseup-2', '.not-dragging.yield'], true);
     }
 }
 

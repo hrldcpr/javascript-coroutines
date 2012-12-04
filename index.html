@@ -143,8 +143,8 @@ var loop = coroutine(function() {
     <span class="not-dragging yield highlighted">while (event = yield) {</span>
         <span class="not-dragging mousedown-1">if (event.type == 'mousedown') {</span>
             <span class="dragging yield">while (event = yield) {</span>
-                <span class="dragging mousemove-1">if (event.type == 'mousemove') move(event);</span>
-                <span class="dragging mouseup-1">if (event.type == 'mouseup') break</span>;
+                <span class="dragging mousemove-1">if (event.type == 'mousemove')</span> <span class="dragging mousemove-2">move(event);</span>
+                <span class="dragging mouseup-1">if (event.type == 'mouseup')</span> <span class="dragging mouseup-2">break;</span>
             }
         }
     }
