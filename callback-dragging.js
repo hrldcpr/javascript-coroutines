@@ -30,7 +30,6 @@ function onmousemove(event) {
         move(event);
         animate(['.dragging.mousemove-1', '.dragging.mousemove-2', '.dragging.yield']);
     }
-        animate(['.not-dragging.mousemove-1', '.not-dragging.yield']);
 }
 function onmouseup(event) {
     if (dragging) {
@@ -46,5 +45,10 @@ $(function() {
 
     $('#box').bind('dragstart', function(event) {
         event.preventDefault(); // stop Firefox from doing weird drag-and-drop things
+    });
+
+    $('#space').mousemove(function() { // only animate non-dragging moves inside #space
+        if (!dragging)
+            animate(['.not-dragging.mousemove-1', '.not-dragging.yield']);
     });
 });
