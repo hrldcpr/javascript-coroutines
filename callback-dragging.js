@@ -10,7 +10,7 @@ setInterval(function() {
         $('.highlighted').removeClass('highlighted');
         $(animation.shift()).addClass('highlighted');
     }
-}, 300);
+}, 200);
 function animate(classes, force) {
     if (force || animation.length == 0) {
         if (force && animation.length > 0) // skip to end of current animation
