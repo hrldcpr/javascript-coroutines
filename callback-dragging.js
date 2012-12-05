@@ -30,6 +30,7 @@ function onmousemove(event) {
         move(event);
         animate(['.dragging.mousemove-1', '.dragging.mousemove-2', '.dragging.yield']);
     }
+        animate(['.not-dragging.mousemove-1', '.not-dragging.yield']);
 }
 function onmouseup(event) {
     if (dragging) {
