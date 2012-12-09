@@ -1,12 +1,39 @@
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="prettify.css" />
+    <script src="prettify.js"></script>
+
     <link rel="stylesheet" type="text/css" href="index.css" />
+
     <script src="jquery-1.8.2.min.js"></script>
     <script type="text/javascript;version=1.7" src="coroutine-dragging.js"></script>
   </head>
-  <body>
-    <div id="space">
-      <div id="box"></div>
+  <body onload="prettyPrint(); initDragging($('#box'), true);">
+    <p>This demo of a <a href="index.html">coroutine event loop</a> uses features of Javascript 1.7 and thus <strong>only works in Firefox</strong>.</p>
+    <p>Try dragging the box around, and observe how the code works:</p>
+    <div class="space">
+      <div id="box" class="box"></div>
     </div>
+    <p></p>
+<pre class="prettyprint">
+var loop = coroutine(function() {
+    var event;
+    <span class="not-dragging mousemove-1 mousedown-1">while (event = <span class="not-dragging yield">yield</span>) {</span>
+        <span class="not-dragging mousedown-2">if (event.type == 'mousedown') {</span>
+            <span class="dragging mousemove-1 mouseup-1">while (event = <span class="dragging yield">yield</span>) {</span>
+                <span class="dragging mousemove-2">if (event.type == 'mousemove')</span>
+                    <span class="dragging mousemove-3">move(event);</span>
+                <span class="dragging mouseup-2">if (event.type == 'mouseup')</span>
+                    <span class="dragging mouseup-3">break;</span>
+            }
+        }
+        <span class="not-dragging mousemove-2 mousemove-3">// ignore mousemoves</span>
+    }
+});
+
+$('#box').mousedown(loop);
+$(window).mousemove(loop)
+    .mouseup(loop);
+</pre>
   </body>
 </html>

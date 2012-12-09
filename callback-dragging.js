@@ -42,6 +42,8 @@ function initDragging(box, animation) {
             move(event);
             animate(['', '.dragging.mousemove-1', '.dragging.mousemove-2', '.dragging.mousemove-3', '.dragging.yield']);
         }
+        else
+            animate(['', '.not-dragging.mousemove-1', '.not-dragging.mousemove-2', '.not-dragging.mousemove-3', '.not-dragging.yield']);
     }
     function onmouseup(event) {
         if (dragging) {
@@ -52,14 +54,10 @@ function initDragging(box, animation) {
 
     // register the listeners:
     box.mousedown(onmousedown);
-    $(window).mousemove(onmousemove).mouseup(onmouseup);
+    box.parent().mousemove(onmousemove);
+    $(window).mouseup(onmouseup);
 
     box.bind('dragstart', function(event) {
         event.preventDefault(); // stop Firefox from doing weird drag-and-drop things
-    });
-
-    box.parent().mousemove(function() { // only animate non-dragging moves
-        if (!dragging)
-            animate(['', '.not-dragging.mousemove-1', '.not-dragging.mousemove-2', '.not-dragging.mousemove-3', '.not-dragging.yield']);
     });
 }
