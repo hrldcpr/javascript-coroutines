@@ -125,16 +125,14 @@ clock(); // prints 'Tick!'
     <p>In the same way that we used the <code>clock</code> function above as a timer callback,
       we can use coroutines as callbacks for events,
       and the event object will be sent to the running coroutine.</p>
-    <p>For example suppose we want to implement this little demo, in which the user can drag a box around:</p>
+    <p>For example suppose we want to implement this little demo, in which the user can drag a box around.</p>
+    <p>Try dragging the box around:</p>
 
-    <div class="figure left">
-      <div class="space">
-        <div id="box1" class="box"></div>
-      </div>
-      <p>try dragging the box</p>
+    <div class="space">
+      <div id="box1" class="box"></div>
     </div>
 
-    <p class="clear">To implement this, we would repeat the following steps:</p>
+    <p class="clear">This program needs to repeat the following steps:</p>
     <ol>
       <li>wait for a <code>mousedown</code> on the box</li>
       <li>process any <code>mousemove</code> events, and actually move the box</li>
@@ -232,13 +230,14 @@ var clock = function() {
     <p>Also note that the single event loop is equivalent to three callback functions.</p>
 
     <div class="clear"></div>
-    <a name="demo"><p>Drag the box and observe how the two different implementations behave:</p></a>
+
+    <a name="demo"><p>Drag the box, and observe how the two different implementations behave:</p></a>
 
     <div class="figure left">
       <div class="space">
         <div id="box2" class="box"></div>
       </div>
-    </div>
+    </div></a>
 
     <div class="clear figure left">
 <pre class="prettyprint">

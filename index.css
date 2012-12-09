@@ -65,11 +65,14 @@ li {
 }
 
 .space {
-    width: 800px;
     height: 250px;
     background: #f8f8f8;
     border: solid 1px #ccc;
     overflow: hidden;
+}
+
+.left .space, .right .space {
+    width: 842px;
 }
 
 .box {
