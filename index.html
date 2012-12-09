@@ -156,32 +156,24 @@ var loop = coroutine(function() {
     }
 });
 </pre>
+    <p><em>Note that <code>move</code> is defined elsewhere, and just moves the div.</em></p>
 
     <p>We can be slightly more concise by noticing that event objects are always 'truthy',
       so we can change the while loops to:</p>
     <pre class="prettyprint">while (event = yield) { ... }</pre>
-    <p>This form of infinite loop is the heart of a coroutine event loop.</p>
-
-    <p>Here is the final implementation of the draggable box using a coroutine event loop:</p>
+    <p>This form of infinite loop is the heart of a coroutine event loop. We end up with:</p>
 <pre class="prettyprint">
-function move(event) {
-    $('#box').css({left: event.pageX, top: event.pageY});
-}
-
 var loop = coroutine(function() {
     var event;
-    while (event = yield) { // not dragging
+    while (event = yield) { // wait for a mousedown
         if (event.type == 'mousedown') {
-            while (event = yield) { // dragging
+            while (event = yield) { // process mousemoves until a mouseup
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
         }
     }
 });
-
-$('#box').mousedown(loop);
-$(window).mousemove(loop).mouseup(loop);
 </pre>
 
     <a name="coroutines-as-state-machines"><h2>Coroutines as State Machines</h2></a>
