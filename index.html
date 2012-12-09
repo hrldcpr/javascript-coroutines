@@ -24,7 +24,7 @@
     <p>Javascript coroutines might not actually be useful, but they're fun to think about.</p>
 
     <p><strong>If you're in a hurry:</strong>
-      a <a href="test-yield.html">Firefox-only demo</a> of a coroutine event loop, and <a href="https://github.com/hrldcpr/javascript-coroutines/blob/master/test-yield.js">the code</a>.</p>
+      try the <a href="#demo">interactive demo</a> contrasting coroutines and callbacks.</p>
 
     <a name="the-basics"><h2>The Basics</h2></a>
 
@@ -240,7 +240,16 @@ var clock = function() {
     </div>
     <p>As a slightly more complex example, we can also implement the 2-state machine from the dragging demo using standard callback functions.</p>
     <p>Once again the coroutine implementation uses no explicit state, while the callback version must.</p>
-    <p>Also note that the single event loop is equivalent to three callback functions:</p>
+    <p>Also note that the single event loop is equivalent to three callback functions.</p>
+
+    <div class="clear"></div>
+    <a name="demo"><p>Drag the box and observe how the two different implementations behave:</p></a>
+
+    <div class="figure left">
+      <div class="space">
+        <div id="box2" class="box"></div>
+      </div>
+    </div>
 
     <div class="clear figure left">
 <pre class="prettyprint">
@@ -279,8 +288,8 @@ var dragging = <span id="dragging" class="dragging not-dragging yield">false</sp
     <span class="not-dragging mousemove-3">// ignore mousemoves</span>
   }
 }
-<span class="dragging mouseup-1">function mouseup(e) {</span>
-  <span class="dragging mouseup-2 mouseup-3">dragging = false;</span>
+<span class="dragging mouseup-1 mouseup-2">function mouseup(e) {</span>
+  <span class="dragging mouseup-3">dragging = false;</span>
 }
 
 $('#box').mousedown(mousedown);
@@ -290,23 +299,19 @@ $(window).mousemove(mousemove)
     <p>draggable box as callbacks and a variable</p>
     </div>
 
-    <div class="clear figure left">
-      <div class="space">
-        <div id="box2" class="box"></div>
-      </div>
-      <p>try dragging the box</p>
-    </div>
+    <p class="clear">The coroutine implementation above is simulated, so that it works in all browsers.
+      If you're using Firefox, you can try the true coroutine implementation <a href="coroutine-dragging.html">here</a>.</p>
 
     <p class="clear">These examples of coroutine event loops are no better than their standard callback function equivalents,
       but it seems possible that some state machines could be more elegantly implemented as coroutines,
       perhaps something involving Ajax requests or something in node.js, where almost everything is a callback.</p>
     <p>If Javascript coroutines receive cross-browser support it will be interesting to see how people use them.</p>
 
-    <p class="clear">This writeup was inspired by the section "Coroutines and Event Dispatching" starting on page 53
+    <p>This writeup was inspired by the section "Coroutines and Event Dispatching" starting on page 53
       of David Beazley's mind-blowing presentation <em><a href="http://www.dabeaz.com/coroutines/Coroutines.pdf">A Curious Course on Coroutines and Concurrency</a></em>.</p>
 
     <div class="footer">
-      <p>Harold Cooper, November 2012</p>
+      <p>Harold Cooper, December 2012</p>
       <p>view <a href="https://github.com/hrldcpr/javascript-coroutines">the source</a> on github</p>
     </div>
 
