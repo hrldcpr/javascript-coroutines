@@ -131,28 +131,7 @@ clock(); // prints 'Tick!'
       <div id="space">
         <div id="box"></div>
       </div>
-    </div>
-
-    <div class="figure left">
-<pre class="prettyprint">
-var loop = coroutine(function() {
-    var event;
-    <span class="not-dragging yield highlighted">while (event = yield) { // not dragging</span>
-        <span class="not-dragging mousedown-1">if (event.type == 'mousedown') {</span>
-            <span class="dragging yield">while (event = yield) { // dragging</span>
-                <span class="dragging mousemove-1">if (event.type == 'mousemove')</span>
-                    <span class="dragging mousemove-2">move(event);</span>
-                <span class="dragging mouseup-1">if (event.type == 'mouseup')</span>
-                    <span class="dragging mouseup-2">break;</span>
-            }
-        }
-        <span class="not-dragging mousemove-1">// not dragging, so ignore mousemoves</span>
-    }
-});
-
-$('#box').mousedown(loop);
-$(window).mousemove(loop).mouseup(loop);
-</pre>
+      <p>try dragging the box</p>
     </div>
 
     <p class="clear">To implement this, we would repeat the following steps:</p>
@@ -184,6 +163,27 @@ var loop = coroutine(function() {
     <p>This form of infinite loop is the heart of a coroutine event loop.</p>
 
     <p>Here is the final implementation of the draggable box using a coroutine event loop:</p>
+<pre class="prettyprint">
+function move(event) {
+    $('#box').css({left: event.pageX, top: event.pageY});
+}
+
+var loop = coroutine(function() {
+    var event;
+    while (event = yield) {
+        if (event.type == 'mousedown') {
+            while (event = yield) {
+                if (event.type == 'mousemove') move(event);
+                if (event.type == 'mouseup') break;
+            }
+        }
+    }
+});
+
+$('#box').mousedown(loop);
+$(window).mousemove(loop).mouseup(loop);
+</pre>
+
     <p>If you're using Firefox you can <a href="test-yield.html">try the demo</a>.
       Here is the full <a href="https://github.com/hrldcpr/javascript-coroutines/blob/master/test-yield.js">Javascript source</a>.</p>
 
@@ -242,22 +242,26 @@ var clock = function() {
     <p>Once again the coroutine implementation uses no explicit state, while the callback version must.</p>
     <p>Also note that the single event loop is equivalent to three callback functions:</p>
 
-    <div class="figure left">
+    <div class="clear figure left">
 <pre class="prettyprint">
 var loop = coroutine(function() {
-    var event;
-    while (event = yield) {
-        if (event.type == 'mousedown') {
-            while (event = yield) {
-                if (event.type == 'mousemove') move(event);
-                if (event.type == 'mouseup') break;
-            }
-        }
+  var e;
+  <span class="not-dragging yield highlighted">while (e = yield) {</span>
+    <span class="not-dragging mousedown-1">if (e.type == 'mousedown') {</span>
+      <span class="dragging yield">while (e = yield) {</span>
+        <span class="dragging mousemove-1">if (e.type == 'mousemove')</span>
+          <span class="dragging mousemove-2">move(e);</span>
+        <span class="dragging mouseup-1">if (e.type == 'mouseup')</span>
+          <span class="dragging mouseup-2">break;</span>
+      }
     }
+    <span class="not-dragging mousemove-1">// ignore mousemoves</span>
+  }
 });
 
 $('#box').mousedown(loop);
-$(window).mousemove(loop).mouseup(loop);
+$(window).mousemove(loop)
+  .mouseup(loop);
 </pre>
     <p>draggable box as a coroutine event loop</p>
     </div>
@@ -265,19 +269,23 @@ $(window).mousemove(loop).mouseup(loop);
     <div class="figure left">
 <pre class="prettyprint">
 var dragging = false;
-function onmousedown(event) {
-    dragging = true;
+function mousedown(e) {
+  dragging = true;
 }
-function onmousemove(event) {
-    if (dragging)
-        move(event);
+function mousemove(e) {
+  if (dragging)
+    move(e);
+  else {
+    // ignore mousemoves
+  }
 }
-function onmouseup(event) {
-    dragging = false;
+function mouseup(e) {
+  dragging = false;
 }
 
-$('#box').mousedown(onmousedown);
-$(window).mousemove(onmousemove).mouseup(onmouseup);
+$('#box').mousedown(mousedown);
+$(window).mousemove(mousemove)
+  .mouseup(mouseup);
 </pre>
     <p>draggable box as callbacks and a variable</p>
     </div>
