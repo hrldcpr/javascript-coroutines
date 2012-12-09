@@ -246,16 +246,16 @@ var clock = function() {
 <pre class="prettyprint">
 var loop = coroutine(function() {
   var e;
-  <span class="not-dragging yield">while (e = yield) {</span>
-    <span class="not-dragging mousedown-1">if (e.type == 'mousedown') {</span>
-      <span class="dragging yield">while (e = yield) {</span>
-        <span class="dragging mousemove-1">if (e.type == 'mousemove')</span>
-          <span class="dragging mousemove-2">move(e);</span>
-        <span class="dragging mouseup-1">if (e.type == 'mouseup')</span>
-          <span class="dragging mouseup-2">break;</span>
+  <span class="not-dragging mousemove-1 mousedown-1">while (e = <span class="not-dragging yield">yield</span>) {</span>
+    <span class="not-dragging mousedown-2">if (e.type == 'mousedown') {</span>
+      <span class="dragging mousemove-1 mouseup-1">while (e = <span class="dragging yield">yield</span>) {</span>
+        <span class="dragging mousemove-2">if (e.type == 'mousemove')</span>
+          <span class="dragging mousemove-3">move(e);</span>
+        <span class="dragging mouseup-2">if (e.type == 'mouseup')</span>
+          <span class="dragging mouseup-3">break;</span>
       }
     }
-    <span class="not-dragging mousemove-1">// ignore mousemoves</span>
+    <span class="not-dragging mousemove-2 mousemove-3">// ignore mousemoves</span>
   }
 });
 
@@ -268,19 +268,19 @@ $(window).mousemove(loop)
 
     <div class="figure left">
 <pre class="prettyprint">
-var dragging = <span id="dragging" class="not-dragging dragging yield">false</span>;
-function mousedown(e) {
-  <span class="not-dragging mousedown-1">dragging = true;</span>
+var dragging = <span id="dragging" class="dragging not-dragging yield">false</span>;
+<span class="not-dragging mousedown-1">function mousedown(e) {</span>
+  <span class="not-dragging mousedown-2">dragging = true;</span>
 }
-function mousemove(e) {
-  <span class="dragging mousemove-1">if (dragging)</span>
-    <span class="dragging mousemove-2">move(e);</span>
-  else {
-    <span class="not-dragging mousemove-1">// ignore mousemoves</span>
+<span class="dragging not-dragging mousemove-1">function mousemove(e) {</span>
+  <span class="dragging mousemove-2">if (dragging)</span>
+    <span class="dragging mousemove-3">move(e);</span>
+  <span class="not-dragging mousemove-2">else {</span>
+    <span class="not-dragging mousemove-3">// ignore mousemoves</span>
   }
 }
-function mouseup(e) {
-  <span class="dragging mouseup-1 mouseup-2">dragging = false;</span>
+<span class="dragging mouseup-1">function mouseup(e) {</span>
+  <span class="dragging mouseup-2 mouseup-3">dragging = false;</span>
 }
 
 $('#box').mousedown(mousedown);
