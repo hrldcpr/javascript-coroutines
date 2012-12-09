@@ -22,8 +22,6 @@ function initDragging(box, animation) {
                 if (class_) { // empty class is used to slow things down
                     $('.highlighted').removeClass('highlighted');
                     $(class_).addClass('highlighted');
-                    if (class_ == '.dragging.yield') $('#dragging').text('true');
-                    else if (class_ == '.not-dragging.yield') $('#dragging').text('false');
                 }
             }
         }, 100);

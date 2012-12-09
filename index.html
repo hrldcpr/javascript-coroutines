@@ -170,9 +170,9 @@ function move(event) {
 
 var loop = coroutine(function() {
     var event;
-    while (event = yield) {
+    while (event = yield) { // not dragging
         if (event.type == 'mousedown') {
-            while (event = yield) {
+            while (event = yield) { // dragging
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
