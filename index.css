@@ -79,6 +79,7 @@ li {
     width: 100px;
     height: 100px;
     background: #4ac;
+    cursor: move;
 }
 
 .yield.highlighted {
