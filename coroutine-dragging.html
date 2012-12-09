@@ -12,7 +12,7 @@
   </head>
   <body onload="prettyPrint(); initDragging($('#box'), true);">
     <p>This demo of a <a href="index.html">coroutine event loop</a> uses features of Javascript 1.7 and thus <strong>only works in Firefox</strong>.</p>
-    <p>Try dragging the box around, and observe how the code works:</p>
+    <p>Try dragging the box around, and observe how the code behaves:</p>
     <div class="space">
       <div id="box" class="box"></div>
     </div>
@@ -36,6 +36,6 @@ var loop = coroutine(function() {
 $('#box').mousedown(loop);
 $(window).mousemove(loop).mouseup(loop);
 </pre>
-    <p>Read about <a href="index.html">how this works</a>.</p>
+    <p>You can <a href="index.html">read more about this</a>.</p>
   </body>
 </html>
