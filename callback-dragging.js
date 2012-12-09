@@ -35,18 +35,18 @@ function initDragging(box, animation) {
     function onmousedown(event) {
         event.preventDefault(); // stop Chrome from trying to select text
         dragging = true;
-        animate(['.not-dragging.mousedown-1', '', '.not-dragging.mousedown-2', '', '.dragging.yield'], true);
+        animate(['', '.not-dragging.mousedown-1', '', '.not-dragging.mousedown-2', '.dragging.yield'], true);
     }
     function onmousemove(event) {
         if (dragging) {
             move(event);
-            animate(['.dragging.mousemove-1', '.dragging.mousemove-2', '.dragging.mousemove-3', '.dragging.yield']);
+            animate(['', '.dragging.mousemove-1', '.dragging.mousemove-2', '.dragging.mousemove-3', '.dragging.yield']);
         }
     }
     function onmouseup(event) {
         if (dragging) {
             dragging = false;
-            animate(['.dragging.mouseup-1', '.dragging.mouseup-2', '.dragging.mouseup-3', '', '.not-dragging.yield'], true);
+            animate(['', '.dragging.mouseup-1', '.dragging.mouseup-2', '.dragging.mouseup-3', '.not-dragging.yield'], true);
         }
     }
 
@@ -60,6 +60,6 @@ function initDragging(box, animation) {
 
     box.parent().mousemove(function() { // only animate non-dragging moves
         if (!dragging)
-            animate(['.not-dragging.mousemove-1', '.not-dragging.mousemove-2', '.not-dragging.mousemove-3', '.not-dragging.yield']);
+            animate(['', '.not-dragging.mousemove-1', '.not-dragging.mousemove-2', '.not-dragging.mousemove-3', '.not-dragging.yield']);
     });
 }
