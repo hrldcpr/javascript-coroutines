@@ -64,20 +64,20 @@ li {
     clear: both;
 }
 
-#space {
-    width: 250px;
+.space {
+    width: 800px;
     height: 250px;
     background: #f8f8f8;
     border: solid 1px #ccc;
     overflow: hidden;
 }
 
-#box {
+.box {
     position: relative;
     top: 50px;
     left: 50px;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     background: #4ac;
 }
 

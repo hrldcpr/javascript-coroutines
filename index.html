@@ -14,7 +14,7 @@
     <script src="callback-dragging.js"></script>
   </head>
 
-  <body onload="prettyPrint();">
+  <body onload="prettyPrint(); initDragging($('#box1'), false); initDragging($('#box2'), true);">
 
     <h1>Coroutine Event Loops in Javascript</h1>
 
@@ -128,8 +128,8 @@ clock(); // prints 'Tick!'
     <p>For example suppose we want to implement this little demo, in which the user can drag a box around:</p>
 
     <div class="figure left">
-      <div id="space">
-        <div id="box"></div>
+      <div class="space">
+        <div id="box1" class="box"></div>
       </div>
       <p>try dragging the box</p>
     </div>
@@ -246,7 +246,7 @@ var clock = function() {
 <pre class="prettyprint">
 var loop = coroutine(function() {
   var e;
-  <span class="not-dragging yield highlighted">while (e = yield) {</span>
+  <span class="not-dragging yield">while (e = yield) {</span>
     <span class="not-dragging mousedown-1">if (e.type == 'mousedown') {</span>
       <span class="dragging yield">while (e = yield) {</span>
         <span class="dragging mousemove-1">if (e.type == 'mousemove')</span>
@@ -268,19 +268,19 @@ $(window).mousemove(loop)
 
     <div class="figure left">
 <pre class="prettyprint">
-var dragging = false;
+var dragging = <span id="dragging" class="not-dragging dragging yield">false</span>;
 function mousedown(e) {
-  dragging = true;
+  <span class="not-dragging mousedown-1">dragging = true;</span>
 }
 function mousemove(e) {
-  if (dragging)
-    move(e);
+  <span class="dragging mousemove-1">if (dragging)</span>
+    <span class="dragging mousemove-2">move(e);</span>
   else {
-    // ignore mousemoves
+    <span class="not-dragging mousemove-1">// ignore mousemoves</span>
   }
 }
 function mouseup(e) {
-  dragging = false;
+  <span class="dragging mouseup-1 mouseup-2">dragging = false;</span>
 }
 
 $('#box').mousedown(mousedown);
@@ -288,6 +288,13 @@ $(window).mousemove(mousemove)
   .mouseup(mouseup);
 </pre>
     <p>draggable box as callbacks and a variable</p>
+    </div>
+
+    <div class="clear figure left">
+      <div class="space">
+        <div id="box2" class="box"></div>
+      </div>
+      <p>try dragging the box</p>
     </div>
 
     <p class="clear">These examples of coroutine event loops are no better than their standard callback function equivalents,
