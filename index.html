@@ -31,7 +31,7 @@
     <a name="the-basics"><h2>The Basics</h2></a>
 
     <p>A coroutine is a function which can suspend itself anywhere in its execution using the <code>yield</code> keyword.</p>
-    <p>It can be resumed at any later point by <em>sending</em> it a value. The sent value will appear as the return value of <code>yield</code> and execution will resume until the next <code>yield</code>.</p>
+    <p>It can then be resumed by <em>sending</em> it a value. The sent value will appear as the return value of <code>yield</code> and execution will resume until the next <code>yield</code>.</p>
 
     <p>For example we can create a simple coroutine which will yield twice and print out the values that are sent to it after each yield:</p>
 <pre class="prettyprint">
