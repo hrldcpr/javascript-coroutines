@@ -8,6 +8,9 @@ body {
 a {
     text-decoration: none;
 }
+a:hover {
+    text-decoration: underline;
+}
 
 h2 {
     clear: both;

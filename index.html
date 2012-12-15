@@ -39,7 +39,7 @@ _gaq.push(['_trackPageview']);
     <p><strong>If you're in a hurry:</strong>
       try the <a href="#demo">interactive demo</a> contrasting coroutines and callbacks.</p>
 
-    <a name="the-basics"><h2>The Basics</h2></a>
+    <h2 id="the-basics">The Basics</h2>
 
     <p>A coroutine is a function which can suspend itself anywhere in its execution using the <code>yield</code> keyword.</p>
     <p>It can then be resumed by <em>sending</em> it a value. The sent value will appear as the return value of <code>yield</code> and execution will resume until the next <code>yield</code>.</p>
@@ -68,7 +68,7 @@ function test() {
       and you can communicate with them by sending values, which will be returned as the value of <code>yield</code> and resume execution.</p>
 
 
-    <a name="the-convenient-coroutine-wrapper"><h2>The Convenient <code>coroutine</code> Wrapper</h2></a>
+    <h2 id="the-convenient-coroutine-wrapper">The Convenient <code>coroutine</code> Wrapper</h2>
 
     <p>Every time you use a coroutine you always do three things:</p>
     <ol>
@@ -105,7 +105,7 @@ test('a cat'); // prints 'Then I got: a cat'
 </pre>
 
 
-    <a name="a-coroutine-loop"><h2>A Coroutine Loop</h2></a>
+    <h2 id="a-coroutine-loop">A Coroutine Loop</h2>
 
     <p>Our first example coroutine yields twice and then ends. Let's make a never-ending coroutine instead.</p>
     <p>Here's a coroutine that never ends, and each time you resume it, it alternates between ticking and tocking:</p>
@@ -133,7 +133,7 @@ clock(); // prints 'Tick!'
     <p>This resumes the coroutine once every 1000ms, and it will tick and tock for eternity.</p>
 
 
-    <a name="a-coroutine-event-loop"><h2>A Coroutine Event Loop</h2></a>
+    <h2 id="a-coroutine-event-loop">A Coroutine Event Loop</h2>
 
     <p>In the same way that we used the <code>clock</code> function above as a timer callback,
       we can use coroutines as callbacks for events,
@@ -186,7 +186,7 @@ var loop = coroutine(function() {
 });
 </pre>
 
-    <a name="coroutines-as-state-machines"><h2>Coroutines as State Machines</h2></a>
+    <h2 id="coroutines-as-state-machines">Coroutines as State Machines</h2>
 
     <p>Let's return to the <code>clock</code> example earlier.
       We can implement it using coroutines as above,
@@ -243,7 +243,7 @@ var clock = function() {
 
     <div class="clear"></div>
 
-    <a name="demo"><p>Drag the box, and observe how the two different implementations behave:</p></a>
+    <p id="demo">Drag the box, and observe how the two different implementations behave:</p>
 
     <div class="figure left">
       <div class="space">
