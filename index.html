@@ -34,7 +34,6 @@ _gaq.push(['_trackPageview']);
     <p>Javascript 1.7, currently only available in Firefox, introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
     <p>An intriguing use of coroutines is to implement event loops as an alternative to callback functions.
       This is particularly relevant to Javascript, where the use of callbacks is pervasive.</p>
-    <p>Javascript coroutines might not actually be useful, but they're fun to think about.</p>
 
     <p><strong>If you're in a hurry:</strong>
       try the <a href="#demo">interactive demo</a> contrasting coroutines and callbacks.</p>
@@ -54,6 +53,7 @@ function test() {
     console.log('Then I got: ' + y);
 }
 </pre>
+    <p><em>Note that once browsers implement ECMAScript 6, coroutines must be defined with an asterisk, e.g. <code class="prettyprint">function* test() { ... }</code>.</em></p>
 
     <p>To initiate an instance of a coroutine you just call the function, which returns a coroutine object:</p>
     <pre class="prettyprint">var tester = test();</pre>
@@ -310,7 +310,7 @@ $(window).mousemove(mousemove)
       of David Beazley's mind-blowing presentation <em><a href="http://www.dabeaz.com/coroutines/Coroutines.pdf">A Curious Course on Coroutines and Concurrency</a></em>.</p>
 
     <div class="footer">
-      <p>Harold Cooper, December 2012</p>
+      <p><a href="https://twitter.com/hrldcpr">Harold Cooper</a>, December 2012</p>
       <p>view <a href="https://github.com/hrldcpr/javascript-coroutines">the source</a> on github</p>
     </div>
 
