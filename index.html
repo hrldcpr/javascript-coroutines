@@ -31,38 +31,41 @@ _gaq.push(['_trackPageview']);
 
     <h1>Coroutine Event Loops in Javascript</h1>
 
-    <p>Javascript 1.7, currently only available in Firefox, introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
+    <p>ECMAScript 6, currently only available in Firefox (or in Chrome with Experimental Javascript enabled),
+      introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
     <p>An intriguing use of coroutines is to implement event loops as an alternative to callback functions.
       This is particularly relevant to Javascript, where the use of callbacks is pervasive.</p>
 
-    <p><strong>If you're in a hurry:</strong>
+    <p><big><strong>If you're in a hurry:</strong></big>
       try the <a href="#demo">interactive demo</a> contrasting coroutines and callbacks.</p>
 
     <h2 id="the-basics">The Basics</h2>
 
-    <p>A coroutine is a function which can suspend itself anywhere in its execution using the <code>yield</code> keyword.</p>
+    <p>A coroutine is a function, marked by the <code>function*</code> syntax,
+      which can suspend itself anywhere in its execution using the <code>yield</code> keyword.</p>
     <p>It can then be resumed by <em>sending</em> it a value. The sent value will appear as the return value of <code>yield</code> and execution will resume until the next <code>yield</code>.</p>
 
     <p>For example we can create a simple coroutine which will yield twice and print out the values that are sent to it after each yield:</p>
 <pre class="prettyprint">
-function test() {
+function* test() {
     console.log('Hello!');
-    var x = yield;
+    var x = yield undefined;
     console.log('First I got: ' + x);
-    var y = yield;
+    var y = yield undefined;
     console.log('Then I got: ' + y);
 }
 </pre>
-    <p><em>Note that once browsers implement ECMAScript 6, coroutines must be defined with an asterisk, e.g. <code class="prettyprint">function* test() { ... }</code>.</em></p>
+    <p><em>Note that current implementations of <code>yield</code> require an argument, which allows you to implement generators,
+        but since our coroutines are only interested in input we simply pass <code>undefined</code>.</em></p>
 
     <p>To initiate an instance of a coroutine you just call the function, which returns a coroutine object:</p>
     <pre class="prettyprint">var tester = test();</pre>
     <p>So far none of the function will have executed, so we must execute the function until it hits a <code>yield</code>, by calling:</p>
-    <pre class="prettyprint">tester.send(); // prints 'Hello!'</pre>
+    <pre class="prettyprint">tester.next(); // prints 'Hello!'</pre>
     <p>Now <code>tester</code> is paused at the first <code>yield</code>, and we can resume the coroutine by sending a value to the <code>yield</code> where it is paused:</p>
-    <pre class="prettyprint">tester.send('a cat'); // prints 'First I got: a cat'</pre>
+    <pre class="prettyprint">tester.next('a cat'); // prints 'First I got: a cat'</pre>
     <p>Now <code>tester</code> is paused at the second <code>yield</code>, and we can send another value:</p>
-    <pre class="prettyprint">tester.send('a dog'); // prints 'Then I got: a dog'</pre>
+    <pre class="prettyprint">tester.next('a dog'); // prints 'Then I got: a dog'</pre>
 
     <p>That's about all there is to coroutines&mdash;they are functions which can suspend themselves using the <code>yield</code> keyword,
       and you can communicate with them by sending values, which will be returned as the value of <code>yield</code> and resume execution.</p>
@@ -73,29 +76,29 @@ function test() {
     <p>Every time you use a coroutine you always do three things:</p>
     <ol>
       <li>Call the function and store the resulting coroutine object.</li>
-      <li>Call <code>send()</code> on the coroutine object, to execute until the first <code>yield</code>.</li>
-      <li>After that all you can do is call <code>send(...)</code> to run the coroutine and send it values.</li>
+      <li>Call <code>next()</code> on the coroutine object, to execute until the first <code>yield</code>.</li>
+      <li>After that all you can do is call <code>next(...)</code> to run the coroutine and send it values.</li>
     </ol>
 
     <p>We can put all of this functionality into a wrapper function:</p>
 <pre class="prettyprint">
 function coroutine(f) {
     var o = f(); // instantiate the coroutine
-    o.send(); // execute until the first yield
+    o.next(); // execute until the first yield
     return function(x) {
-        o.send(x);
+        o.next(x);
     }
 }
 </pre>
-    <p>This sets up the coroutine and returns a function which we can call directly instead of calling <code>send</code> on the coroutine object.</p>
+    <p>This sets up the coroutine and returns a function which we can call directly instead of calling <code>next</code> on the coroutine object.</p>
 
-    <p>Using this wrapper, our earlier example becomes:</p>
+    <p>Using this wrapper, and using an unprovided argument to let us refer to <code>undefined</code> as <code>_</code>, our earlier example becomes:</p>
 <pre class="prettyprint">
-var test = coroutine(function() {
+var test = coroutine(function*(_) {
     console.log('Hello!');
-    var x = yield;
+    var x = yield _;
     console.log('First I got: ' + x);
-    var y = yield;
+    var y = yield _;
     console.log('Then I got: ' + y);
 });
 // prints 'Hello!'
@@ -111,11 +114,11 @@ test('a cat'); // prints 'Then I got: a cat'
     <p>Here's a coroutine that never ends, and each time you resume it, it alternates between ticking and tocking:</p>
 
 <pre class="prettyprint">
-var clock = coroutine(function() {
+var clock = coroutine(function*(_) {
     while (true) {
-        yield;
+        yield _;
         console.log('Tick!');
-        yield;
+        yield _;
         console.log('Tock!');
     }
 });
@@ -153,12 +156,12 @@ clock(); // prints 'Tick!'
 
     <p>We can implement this as a coroutine that receives events from <code>yield</code>:</p>
 <pre class="prettyprint">
-var loop = coroutine(function() {
+var loop = coroutine(function*(_) {
     while (true) { // wait for a mousedown
-        var event = yield;
+        var event = yield _;
         if (event.type == 'mousedown') {
             while (true) { // process mousemoves until a mouseup
-                var event = yield;
+                var event = yield _;
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
@@ -170,14 +173,14 @@ var loop = coroutine(function() {
 
     <p>We can be slightly more concise by noticing that event objects are always 'truthy',
       so we can change the while loops to:</p>
-    <pre class="prettyprint">while (event = yield) { ... }</pre>
+    <pre class="prettyprint">while (event = yield _) { ... }</pre>
     <p>This form of infinite loop is the heart of a coroutine event loop. We end up with:</p>
 <pre class="prettyprint">
-var loop = coroutine(function() {
+var loop = coroutine(function*(_) {
     var event;
-    while (event = yield) { // wait for a mousedown
+    while (event = yield _) { // wait for a mousedown
         if (event.type == 'mousedown') {
-            while (event = yield) { // process mousemoves until a mouseup
+            while (event = yield _) { // process mousemoves until a mouseup
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
@@ -193,11 +196,11 @@ var loop = coroutine(function() {
       or we can of course implement it without coroutines, using a function and a variable:</p>
     <div class="figure left">
 <pre class="prettyprint">
-var clock = coroutine(function() {
+var clock = coroutine(function*(_) {
     while (true) {
-        yield;
+        yield _;
         console.log('Tick!');
-        yield;
+        yield _;
         console.log('Tock!');
     }
 });
@@ -253,11 +256,11 @@ var clock = function() {
 
     <div class="clear figure left">
 <pre class="prettyprint">
-var loop = coroutine(function() {
+var loop = coroutine(function*(_) {
   var e;
-  <span class="not-dragging mousemove-1 mousedown-1">while (e = <span class="not-dragging yield">yield</span>) {</span>
+  <span class="not-dragging mousemove-1 mousedown-1">while (e = <span class="not-dragging yield">yield _</span>) {</span>
     <span class="not-dragging mousedown-2">if (e.type == 'mousedown') {</span>
-      <span class="dragging mousemove-1 mouseup-1">while (e = <span class="dragging yield">yield</span>) {</span>
+      <span class="dragging mousemove-1 mouseup-1">while (e = <span class="dragging yield">yield _</span>) {</span>
         <span class="dragging mousemove-2">if (e.type == 'mousemove')</span>
           <span class="dragging mousemove-3">move(e);</span>
         <span class="dragging mouseup-2">if (e.type == 'mouseup')</span>
@@ -299,10 +302,12 @@ $(window).mousemove(mousemove)
     <p>draggable box as callbacks and a variable</p>
     </div>
 
-    <p class="clear">The coroutine implementation above is just a simulation, so that it works in all browsers.
-      If you're using Firefox, you can try the <a href="coroutine-dragging.html">real live coroutine implementation</a>.</p>
+    <p class="clear">The coroutine implementation above is just a simulation, so that it works in all browsers,
+      most of which still don't support ECMAScript 6.</p>
+    <p>But if you're using Firefox (or Chrome with Experimental Javascript enabled),
+      you can try the <a href="coroutine-dragging.html">real live coroutine implementation</a>!</p>
 
-    <p class="clear">These examples of coroutine event loops are no better than their standard callback function equivalents,
+    <p>These examples of coroutine event loops are no better than their standard callback function equivalents,
       but complex state machines could be more elegantly implemented as coroutines,
       perhaps for example something involving Ajax requests or something in node.js, where almost everything is a callback.</p>
 

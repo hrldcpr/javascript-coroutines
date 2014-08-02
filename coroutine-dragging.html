@@ -1,5 +1,10 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+
+    <title>Javascript Coroutine Event Loop Demo</title>
+
     <link rel="stylesheet" type="text/css" href="normalize.css" />
 
     <link rel="stylesheet" type="text/css" href="prettify.css" />
@@ -8,21 +13,21 @@
     <link rel="stylesheet" type="text/css" href="index.css" />
 
     <script src="jquery-1.8.2.min.js"></script>
-    <script type="text/javascript;version=1.7" src="coroutine-dragging.js"></script>
+    <script src="coroutine-dragging.js"></script>
   </head>
   <body onload="prettyPrint(); initDragging($('#box'), true);">
-    <p>This demo of a <a href="index.html">coroutine event loop</a> uses features of Javascript 1.7 and thus <strong>only works in Firefox</strong>.</p>
+    <p>This demo of a <a href="index.html">coroutine event loop</a> uses features of ECMAScript 6 and thus <strong>only works in Firefox, or in Chrome with <code>chrome://flags/#enable-javascript-harmony</code> enabled</strong>.</p>
     <p>Try dragging the box around, and observe how the code behaves:</p>
     <div class="space">
       <div id="box" class="box"></div>
     </div>
     <p></p>
 <pre class="prettyprint">
-var loop = coroutine(function() {
+var loop = coroutine(function*(_) {
     var event;
-    <span class="not-dragging mousemove-1 mousedown-1">while (event = <span class="not-dragging yield">yield</span>) { // not dragging</span>
+    <span class="not-dragging mousemove-1 mousedown-1">while (event = <span class="not-dragging yield">yield _</span>) { // not dragging</span>
         <span class="not-dragging mousedown-2">if (event.type == 'mousedown') {</span>
-            <span class="dragging mousemove-1 mouseup-1">while (event = <span class="dragging yield">yield</span>) { // dragging</span>
+            <span class="dragging mousemove-1 mouseup-1">while (event = <span class="dragging yield">yield _</span>) { // dragging</span>
                 <span class="dragging mousemove-2">if (event.type == 'mousemove')</span>
                     <span class="dragging mousemove-3">move(event);</span>
                 <span class="dragging mouseup-2">if (event.type == 'mouseup')</span>
