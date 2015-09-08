@@ -31,8 +31,7 @@ _gaq.push(['_trackPageview']);
 
     <h1>Coroutine Event Loops in Javascript</h1>
 
-    <p>ECMAScript 6, currently only available in Firefox (or in Chrome with Experimental Javascript enabled),
-      introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
+    <p>ECMAScript 6 introduces a <code>yield</code> keyword for implementing generators and coroutines.<p>
     <p>An intriguing use of coroutines is to implement event loops as an alternative to callback functions.
       This is particularly relevant to Javascript, where the use of callbacks is pervasive.</p>
 
@@ -303,8 +302,8 @@ $(window).mousemove(mousemove)
     </div>
 
     <p class="clear">The coroutine implementation above is just a simulation, so that it works in all browsers,
-      most of which still don't support ECMAScript 6.</p>
-    <p>But if you're using Firefox (or Chrome with Experimental Javascript enabled),
+      some of which still don't support ECMAScript 6.</p>
+    <p>But if you're using a recent version of Firefox or Chrome,
       you can try the <a href="coroutine-dragging.html">real live coroutine implementation</a>!</p>
 
     <p>These examples of coroutine event loops are no better than their standard callback function equivalents,
