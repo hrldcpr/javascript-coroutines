@@ -231,7 +231,7 @@ var clock = function() {
       and never explicitly stores any state.</p>
     <p>Without using coroutines you <em>must</em> use a variable to store the state of whether the next call should tick or tock.</p>
     <p>This variable can only be avoided because <strong>coroutines add an entirely new form of state</strong> to the language,
-      namely the state of where the coroutine is currently suspended.</p>
+      namely the state of <em>where</em> the coroutine is currently suspended.</p>
     <p>One benefit of this 'implicit' coroutine state is that it is guaranteed to be consistent.
       This differs from the variable state, which could easily become invalid if we do something like <code>ticking="maybe"</code>.</p>
 
