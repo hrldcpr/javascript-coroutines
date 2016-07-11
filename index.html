@@ -48,15 +48,12 @@ _gaq.push(['_trackPageview']);
 <pre class="prettyprint">
 function* test() {
     console.log('Hello!');
-    var x = yield undefined;
+    var x = yield;
     console.log('First I got: ' + x);
-    var y = yield undefined;
+    var y = yield;
     console.log('Then I got: ' + y);
 }
 </pre>
-    <p><em>Note that current implementations of <code>yield</code> require an argument, which allows you to implement generators,
-        but since our coroutines are only interested in input we simply pass <code>undefined</code>.</em></p>
-
     <p>To initiate an instance of a coroutine you just call the function, which returns a coroutine object:</p>
     <pre class="prettyprint">var tester = test();</pre>
     <p>So far none of the function will have executed, so we must execute the function until it hits a <code>yield</code>, by calling:</p>
@@ -91,13 +88,13 @@ function coroutine(f) {
 </pre>
     <p>This sets up the coroutine and returns a function which we can call directly instead of calling <code>next</code> on the coroutine object.</p>
 
-    <p>Using this wrapper, and using an unprovided argument to let us refer to <code>undefined</code> as <code>_</code>, our earlier example becomes:</p>
+    <p>Using this wrapper, our earlier example becomes:</p>
 <pre class="prettyprint">
-var test = coroutine(function*(_) {
+var test = coroutine(function*() {
     console.log('Hello!');
-    var x = yield _;
+    var x = yield;
     console.log('First I got: ' + x);
-    var y = yield _;
+    var y = yield;
     console.log('Then I got: ' + y);
 });
 // prints 'Hello!'
@@ -113,11 +110,11 @@ test('a cat'); // prints 'Then I got: a cat'
     <p>Here's a coroutine that never ends, and each time you resume it, it alternates between ticking and tocking:</p>
 
 <pre class="prettyprint">
-var clock = coroutine(function*(_) {
+var clock = coroutine(function*() {
     while (true) {
-        yield _;
+        yield;
         console.log('Tick!');
-        yield _;
+        yield;
         console.log('Tock!');
     }
 });
@@ -155,12 +152,12 @@ clock(); // prints 'Tick!'
 
     <p>We can implement this as a coroutine that receives events from <code>yield</code>:</p>
 <pre class="prettyprint">
-var loop = coroutine(function*(_) {
+var loop = coroutine(function*() {
     while (true) { // wait for a mousedown
-        var event = yield _;
+        var event = yield;
         if (event.type == 'mousedown') {
             while (true) { // process mousemoves until a mouseup
-                var event = yield _;
+                var event = yield;
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
@@ -172,14 +169,14 @@ var loop = coroutine(function*(_) {
 
     <p>We can be slightly more concise by noticing that event objects are always 'truthy',
       so we can change the while loops to:</p>
-    <pre class="prettyprint">while (event = yield _) { ... }</pre>
+    <pre class="prettyprint">while (event = yield) { ... }</pre>
     <p>This form of infinite loop is the heart of a coroutine event loop. We end up with:</p>
 <pre class="prettyprint">
-var loop = coroutine(function*(_) {
+var loop = coroutine(function*() {
     var event;
-    while (event = yield _) { // wait for a mousedown
+    while (event = yield) { // wait for a mousedown
         if (event.type == 'mousedown') {
-            while (event = yield _) { // process mousemoves until a mouseup
+            while (event = yield) { // process mousemoves until a mouseup
                 if (event.type == 'mousemove') move(event);
                 if (event.type == 'mouseup') break;
             }
@@ -195,11 +192,11 @@ var loop = coroutine(function*(_) {
       or we can of course implement it without coroutines, using a function and a variable:</p>
     <div class="figure left">
 <pre class="prettyprint">
-var clock = coroutine(function*(_) {
+var clock = coroutine(function*() {
     while (true) {
-        yield _;
+        yield;
         console.log('Tick!');
-        yield _;
+        yield;
         console.log('Tock!');
     }
 });
@@ -255,11 +252,11 @@ var clock = function() {
 
     <div class="clear figure left">
 <pre class="prettyprint">
-var loop = coroutine(function*(_) {
+var loop = coroutine(function*() {
   var e;
-  <span class="not-dragging mousemove-1 mousedown-1">while (e = <span class="not-dragging yield">yield _</span>) {</span>
+  <span class="not-dragging mousemove-1 mousedown-1">while (e = <span class="not-dragging yield">yield</span>) {</span>
     <span class="not-dragging mousedown-2">if (e.type == 'mousedown') {</span>
-      <span class="dragging mousemove-1 mouseup-1">while (e = <span class="dragging yield">yield _</span>) {</span>
+      <span class="dragging mousemove-1 mouseup-1">while (e = <span class="dragging yield">yield</span>) {</span>
         <span class="dragging mousemove-2">if (e.type == 'mousemove')</span>
           <span class="dragging mousemove-3">move(e);</span>
         <span class="dragging mouseup-2">if (e.type == 'mouseup')</span>

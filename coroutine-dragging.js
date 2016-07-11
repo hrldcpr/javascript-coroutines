@@ -37,13 +37,13 @@ function initDragging(box, animation) {
         animate = function() {}
     }
 
-    var loop = coroutine(function*(_) {
+    var loop = coroutine(function*() {
         var event;
-        while (event = yield _) {
+        while (event = yield) {
             if (event.type == 'mousedown') {
                 event.preventDefault(); // stop Chrome from trying to select text
                 animate(['', '.not-dragging.mousedown-1', '', '.not-dragging.mousedown-2', '.dragging.yield'], true);
-                while (event = yield _) {
+                while (event = yield) {
                     if (event.type == 'mousemove') {
                         animate(['', '.dragging.mousemove-1', '.dragging.mousemove-2', '.dragging.mousemove-3', '.dragging.yield']);
                         move(event);
