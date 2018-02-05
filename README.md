@@ -1,1 +1,1 @@
-http://syzygy.st/javascript-coroutines/
+https://x.st/javascript-coroutines/
