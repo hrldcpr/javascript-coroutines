@@ -1,1 +1,1 @@
-https://x.st/javascript-coroutines/
+https://polyhedron.party/javascript-coroutines/
